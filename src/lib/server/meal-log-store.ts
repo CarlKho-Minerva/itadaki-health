@@ -1,6 +1,6 @@
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { MealLog, MealLogInput } from "@/lib/meal-log-types";
+import { MealLog, MealLogInput, MealLogItem } from "@/lib/meal-log-types";
 import { csvEscape } from "@/lib/trigger";
 
 const csvHeader =
@@ -25,7 +25,30 @@ function toNumber(value: unknown, fallback = 0) {
 
 function compactDataUrl(value?: string) {
   if (!value?.startsWith("data:image/")) return undefined;
-  return value.length > 650_000 ? undefined : value;
+  return value.length > 900_000 ? undefined : value;
+}
+
+function compactItems(value: unknown): MealLogItem[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+
+  const items = value
+    .slice(0, 8)
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const record = item as Record<string, unknown>;
+      const name = String(record.name ?? "").trim();
+      const amount = String(record.amount ?? "").trim();
+      const confidence = Number(record.confidence);
+      if (!name || !amount) return null;
+      return {
+        name: name.slice(0, 80),
+        amount: amount.slice(0, 80),
+        confidence: Number.isFinite(confidence) ? Math.max(0, Math.min(1, confidence)) : undefined,
+      };
+    })
+    .filter(Boolean) as MealLogItem[];
+
+  return items.length ? items : undefined;
 }
 
 export function toCsvRow(log: MealLog) {
@@ -59,11 +82,17 @@ export async function appendMealLog(input: MealLogInput) {
     protein: input.protein === undefined ? undefined : toNumber(input.protein),
     carbs: input.carbs === undefined ? undefined : toNumber(input.carbs),
     fat: input.fat === undefined ? undefined : toNumber(input.fat),
+    sodium: input.sodium === undefined ? undefined : toNumber(input.sodium),
     imageLabel: input.imageLabel || "",
     thumbnailDataUrl: compactDataUrl(input.thumbnailDataUrl),
     uncertainty: input.uncertainty || "",
     mode: input.mode || "",
     note: input.note || "",
+    calorieRange: input.calorieRange || "",
+    proteinRange: input.proteinRange || "",
+    carbsRange: input.carbsRange || "",
+    fatRange: input.fatRange || "",
+    items: compactItems(input.items),
   };
 
   await mkdir(storageRoot(), { recursive: true });
@@ -118,6 +147,15 @@ function seededLogs(limit: number): MealLog[] {
       uncertainty: "Seeded fallback shown when Vercel serverless storage is empty.",
       mode: "demo",
       note: "Use persistent KV or Blob storage after the hackathon.",
+      calorieRange: "400-520",
+      proteinRange: "16-25",
+      carbsRange: "32-48",
+      fatRange: "18-32",
+      items: [
+        { name: "Eggs", amount: "2 large", confidence: 0.92 },
+        { name: "Avocado", amount: "half avocado", confidence: 0.78 },
+        { name: "Toast", amount: "1 slice", confidence: 0.84 },
+      ],
     },
   ];
 

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Itadaki Health",
   description:
-    "Intentional food logging for Meta Ray-Ban Display, powered by synthetic Health Passport context.",
+    "Intentional food logging for Meta Ray-Ban Display, powered by Grok and a FHIR-ready meal log.",
 };
 
 export default function RootLayout({

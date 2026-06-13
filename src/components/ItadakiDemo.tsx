@@ -199,7 +199,7 @@ export default function ItadakiDemo() {
           <h1>Say itadakimasu. See the calories.</h1>
           <p>
             A tiny Meta Ray-Ban Display MVP: intent gesture, meal photo, calorie estimate,
-            Health Passport memory.
+            and a card you can review later.
           </p>
         </motion.div>
 
@@ -236,9 +236,8 @@ export default function ItadakiDemo() {
         </div>
         <p>
           For Filipino families, blood pressure, fatty liver, LDL, and kidney worries often live as
-          vague dinner-table anxiety. Health Passport makes the record portable; Itadaki makes the
-          meal part of that record. The app does not scold. It logs the choice, adds context, and
-          gives one useful question for later.
+          vague dinner-table anxiety. Itadaki makes the meal observable without turning it into a
+          scolding. The app logs the choice, keeps the estimate honest, and saves a card for later.
         </p>
       </section>
 

@@ -1,22 +1,7 @@
 import { appendMealLog, readMealLogs } from "@/lib/server/meal-log-store";
+import type { MealLogInput } from "@/lib/meal-log-types";
 
 export const runtime = "nodejs";
-
-type LogMealRequest = {
-  source?: string;
-  transcript?: string;
-  mealName?: string;
-  calories?: number;
-  protein?: number;
-  carbs?: number;
-  fat?: number;
-  imageLabel?: string;
-  thumbnailDataUrl?: string;
-  triggered?: boolean;
-  uncertainty?: string;
-  mode?: string;
-  note?: string;
-};
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -26,7 +11,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const body = (await request.json().catch(() => ({}))) as LogMealRequest;
+  const body = (await request.json().catch(() => ({}))) as MealLogInput;
 
   try {
     const result = await appendMealLog(body);

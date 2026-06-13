@@ -76,7 +76,7 @@ export const mealScenarios: MealScenario[] = [
 
 export const syntheticProfile = {
   name: "Synthetic Carl",
-  note: "Synthetic data only. No diagnosis. Demo profile mirrors a portable Health Passport.",
+  note: "Synthetic data only. No diagnosis. Demo profile mirrors a portable health record.",
   conditions: ["ADHD", "family history of hypertension", "recent elevated A1C flag"],
   medications: ["methylphenidate", "escitalopram"],
   goals: [
@@ -153,7 +153,7 @@ export const pitchTimeline = [
     time: "0:45-1:25",
     title: "Demo",
     line:
-      "Trigger, glasses HUD, meal analysis, Health Passport context, timeline update.",
+      "Trigger, glasses HUD, meal analysis, log card, trend-aware export.",
   },
   {
     time: "1:25-1:55",
@@ -165,18 +165,18 @@ export const pitchTimeline = [
     time: "1:55-2:20",
     title: "Business",
     line:
-      "Cal AI made the market obvious. Itadaki Health adds consent, wearability, and clinical context.",
+      "Cal AI made the market obvious. Itadaki Health adds consent, wearability, and trend memory.",
   },
   {
     time: "2:20-2:50",
     title: "Architecture",
-    line: "Vercel, Grok, Inngest, Meta Web App, and a synthetic Health Passport profile.",
+    line: "Vercel, Grok, Inngest, Meta Web App, iOS DAT, and Michelle's FHIR lane.",
   },
   {
     time: "2:50-3:00",
     title: "Close",
     line:
-      "This is not calorie counting. This is patient agency at the moment behavior happens.",
+      "This is not food policing. It is a clean record at the moment behavior happens.",
   },
 ];
 
@@ -225,11 +225,11 @@ export function createMockAnalysis(
     clinicalContext: {
       profileName: syntheticProfile.name,
       flags: isSandwich
-        ? ["Sodium spike relative to family-risk profile", "Carb load before evening crash window"]
-        : ["Balanced protein for coding block", "Carb load worth tracking against A1C trend"],
+        ? ["Higher-sodium restaurant meal", "Carb-heavy dinner worth logging"]
+        : ["Solid protein for a coding block", "Grain-heavy lunch worth tracking"],
       whyItMatters: isSandwich
-        ? "For this synthetic profile, sodium and refined carbs matter more than the headline calories."
-        : "For this synthetic profile, the meal is reasonable, but repeated grain-heavy lunches should be tied to A1C and afternoon energy.",
+        ? "The useful move is awareness: if this pattern repeats, bring the trend to a clinician instead of guessing from memory."
+        : "This meal is fine as a meal. The value is seeing whether similar lunches cluster with labs, energy, or sleep later.",
       betterChoice: isSandwich
         ? "Keep the sandwich, swap chips for fruit or split the chips."
         : "Keep the bowl, ask for dressing on the side next time.",
@@ -237,7 +237,7 @@ export function createMockAnalysis(
     clinicianQuestion: isSandwich
       ? "Given my family history of hypertension, what daily sodium target should I use for restaurant meals?"
       : "If my A1C is elevated but fasting glucose is normal, should I track post-meal glucose or meal timing?",
-    timelineEntry: `${scenario.name}: intentional food log captured after "itadakimasu"; added nutrition estimate, uncertainty, and one clinician question.`,
+    timelineEntry: `${scenario.name}: intentional food log captured after "itadakimasu"; added nutrition estimate, uncertainty, and one optional clinician question.`,
     uncertainty:
       "Portion estimates are approximate. This is coaching context, not medical advice or dosing guidance.",
     careActions: [
@@ -258,7 +258,7 @@ export function createMockAnalysis(
       },
       {
         label: "timeline.updated",
-        detail: "Synthetic Health Passport timeline received a food-context event.",
+        detail: "Meal memory received a food-context event.",
         status: "done",
       },
       {
@@ -271,7 +271,7 @@ export function createMockAnalysis(
 }
 
 export function buildAnalysisPrompt(mealText: string, scenario: MealScenario) {
-  return `You are Itadaki Health, a patient-agency food context agent.
+  return `You are Itadaki Health, a meal awareness agent.
 
 Return strict JSON matching this shape:
 {
@@ -299,7 +299,8 @@ Return strict JSON matching this shape:
 
 Rules:
 - Do not diagnose, prescribe, or claim medical certainty.
-- Mention that this is synthetic Health Passport context.
+- Do not shame the meal or tell the user not to eat it; the meal is already here.
+- Do not mention Health Passport in user-facing output.
 - Be specific about uncertainty.
 - Make the result useful in a 3-minute hackathon demo.
 

@@ -20,7 +20,7 @@ Live:
 Itadaki Health turns a meal gesture into an explicit consent trigger for food logging on Meta Ray-Ban Display. The MVP flow is intentionally small:
 
 ```text
-intent gesture -> cropped meal image -> calorie estimate -> Health Passport memory
+intent gesture -> cropped meal image -> calorie estimate -> log card
 ```
 
 The demo has two surfaces:
@@ -33,12 +33,12 @@ The demo has two surfaces:
 
 This is not a "you should not eat that" app. Most people have already bought the meal by the time a camera sees it.
 
-The better job is awareness. In Carl's family and Filipino community context, blood pressure, fatty liver, LDL, diabetes risk, and kidney worries often sit in the background as vague anxiety. Health Passport makes the record portable. Itadaki makes the meal part of that record, so the next check-in can connect what someone eats with the labs and notes they already carry.
+The better job is awareness. In Carl's family and Filipino community context, blood pressure, fatty liver, LDL, diabetes risk, and kidney worries often sit in the background as vague anxiety. Itadaki makes the meal observable, so later care tools can connect what someone eats with the labs and notes they already carry.
 
 The demo line:
 
 ```text
-Meta can see the meal. Health Passport knows the context. Itadaki asks for intent, logs the moment, and gives one useful awareness card.
+Meta can see the meal. Itadaki asks for intent, logs the moment, and gives one useful awareness card.
 ```
 
 ## Current MVP Pipeline
@@ -104,7 +104,7 @@ The Web App path is still useful for the tiny glasses HUD, but the iOS path is t
 
 The voice trigger is not passive background listening. It is a short foreground recording. If the Ray-Bans are connected to iOS as a Bluetooth hands-free input, the recorder prefers that mic; otherwise it falls back to the iPhone mic.
 
-Physical iPhone status: the connected iPhone is paired and visible to CoreDevice. Installing the app is blocked until Xcode has an Apple account/provisioning profile for `com.carlkho.itadaki.dat`. The simulator and generic iPhone builds pass.
+Physical iPhone status: the connected iPhone is paired and visible to CoreDevice. The app builds, installs, and launches on the iPhone after the Personal Team signing fix on `ios-dat-companion`.
 
 ### Low-Power Gesture Strategy
 
@@ -153,6 +153,73 @@ The MVP does not assume a system-level "Hey Meta" wake hook inside Web Apps. It 
 
 This repo was created fresh for the June 13 hackathon. Prior Carl projects such as Health Passport, Somach Care Router, and Soma HUD are disclosed as background and narrative context. Source code from those repos is not copied here.
 
+## Health Risk Intelligence Layer
+
+An additive, backend-only layer that turns a short history of meals into a
+rule-based dietary risk signal and a FHIR R4 CarePlan. It sits alongside the
+existing meal analysis and FHIR Observation bundle and does not modify either.
+
+What it does:
+
+- **Meal history store** (`src/lib/meal-history.ts`) — keeps the last 5 meals
+  per user in memory. Each meal has `userId`, `calories`, `protein`, `sugar`,
+  and `timestamp`. In-memory only; it resets when the server restarts.
+- **Rule-based risk engine** (`src/lib/risk-engine.ts`) — looks at the last 3–5
+  meals and flags: high calorie trend, low protein trend, repeated unhealthy
+  pattern (consecutive high-calorie meals), and high sugar trend. Output:
+  `{ risks: string[], score: number }` where `score` is 0–100.
+- **FHIR CarePlan generator** (`src/lib/careplan.ts`) — converts the risk output
+  into a valid, lightweight FHIR R4 `CarePlan` resource (one `activity` per
+  flagged risk, score carried as an extension).
+- **Integration** (`src/lib/risk-intelligence.ts`) — hooks into the existing
+  `meal.analyzed` flow: store meal → run risk engine → generate CarePlan →
+  attach to the demo API response (plus a new
+  `care_plan.generated` Inngest event).
+
+This layer is **rule-based and is NOT a medical diagnosis**. It generates FHIR
+R4 CarePlan outputs as coaching context only, on synthetic data.
+
+### Run / test it locally
+
+```bash
+npm install        # if you haven't already
+npm run dev        # http://localhost:3000
+```
+
+Trigger the real `meal.analyzed` flow (risk + CarePlan attached under
+`riskIntelligence`):
+
+```bash
+curl -s -X POST http://localhost:3000/api/analyze-meal \
+  -H 'content-type: application/json' \
+  -d '{"scenarioId":"mendo-turkey","userId":"demo-user"}' | jq .riskIntelligence
+```
+
+Get just the bare FHIR R4 CarePlan from the same endpoint:
+
+```bash
+curl -s -X POST 'http://localhost:3000/api/analyze-meal?format=careplan' \
+  -H 'content-type: application/json' \
+  -d '{"scenarioId":"mendo-turkey","userId":"demo-user"}' | jq .
+```
+
+Simulate a trend directly with the standalone `/api/risk` test endpoint (a
+single analyze-meal call only stores one meal; a trend needs several):
+
+```bash
+# reset, then seed a high-calorie / low-protein / high-sugar streak
+curl -s -X POST http://localhost:3000/api/risk -H 'content-type: application/json' \
+  -d '{"userId":"demo-user","reset":true}'
+for body in \
+  '{"userId":"demo-user","calories":900,"protein":18,"sugar":70}' \
+  '{"userId":"demo-user","calories":820,"protein":20,"sugar":60}' \
+  '{"userId":"demo-user","calories":880,"protein":15,"sugar":80}'; do
+  curl -s -X POST http://localhost:3000/api/risk -H 'content-type: application/json' -d "$body" >/dev/null
+done
+# read the current risk report + CarePlan
+curl -s 'http://localhost:3000/api/risk?userId=demo-user' | jq '{risk, carePlan}'
+```
+
 ## Safety Note
 
 This project uses synthetic health data. It does not diagnose, prescribe, or provide medical advice. It produces coaching context and clinician questions for a user to discuss with a professional.
@@ -196,8 +263,8 @@ After deploy, add the public HTTPS `/glasses/index.html` URL to the Meta AI app 
 - `0:00-0:20` Cal AI proved people will pay to photograph food. Passive glasses need an intent layer.
 - `0:20-0:45` The consent moment is a meal gesture, not passive surveillance.
 - `0:45-1:25` Demo: look at meal, gesture/button, DAT photo, crop, xAI analysis, calories card.
-- `1:25-1:55` Health Passport context: the card turns a meal into a memory connected to labs and risks.
-- `1:55-2:20` Business: Cal AI made the habit obvious; Itadaki adds wearability and medical context.
+- `1:25-1:55` Awareness: the card turns a meal into a reviewable memory without scolding the user.
+- `1:55-2:20` Business: Cal AI made the habit obvious; Itadaki adds wearability and intent.
 - `2:20-2:50` Architecture: iOS DAT capture, Vercel, Grok, JSONL cards, FHIR-ready next branch.
 - `2:50-3:00` Close: this is awareness at the moment behavior happens.
 

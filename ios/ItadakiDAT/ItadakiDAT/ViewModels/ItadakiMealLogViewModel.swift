@@ -25,14 +25,18 @@ final class ItadakiMealLogViewModel {
 
   func analyzeAndLog(photo: UIImage, transcript: String = "Itadakimasu") async {
     let preparedPhoto = photo.itadakiMealCrop()
+    let cardThumbnail = photo.itadakiMealCrop(maxSide: 320)
     guard let imageData = preparedPhoto.jpegData(compressionQuality: 0.72) else {
       showError("Could not encode photo.")
       return
     }
 
     let dataURL = "data:image/jpeg;base64,\(imageData.base64EncodedString())"
+    let thumbnailDataURL = cardThumbnail.jpegData(compressionQuality: 0.58)
+      .map { "data:image/jpeg;base64,\($0.base64EncodedString())" } ?? dataURL
     isAnalyzing = true
     statusText = "Analyzing meal with Grok..."
+    defer { isAnalyzing = false }
 
     do {
       let analysisResponse: AnalyzeMealResponse = try await post(
@@ -46,24 +50,48 @@ final class ItadakiMealLogViewModel {
       )
 
       let analysis = analysisResponse.analysis
+      var logBody: [String: Any] = [
+        "source": "ios-dat-companion",
+        "status": "logged",
+        "triggered": true,
+        "transcript": transcript,
+        "mealName": analysis.mealName,
+        "calories": analysis.nutrition.calories.value,
+        "protein": analysis.nutrition.protein.value,
+        "carbs": analysis.nutrition.carbs.value,
+        "fat": analysis.nutrition.fat.value,
+        "imageLabel": "dat-photo",
+        "thumbnailDataUrl": thumbnailDataURL,
+        "uncertainty": analysis.uncertainty ?? "",
+        "mode": analysisResponse.mode ?? "xai",
+        "note": "Captured through the iOS DAT companion, center-cropped before analysis.",
+        "items": (analysis.itemEstimate ?? []).map { item in
+          [
+            "name": item.name,
+            "amount": item.amount,
+            "confidence": item.confidence ?? 0,
+          ] as [String: Any]
+        },
+      ]
+      if let sodium = analysis.nutrition.sodium?.value {
+        logBody["sodium"] = sodium
+      }
+      if let range = analysis.nutrition.calories.range {
+        logBody["calorieRange"] = range
+      }
+      if let range = analysis.nutrition.protein.range {
+        logBody["proteinRange"] = range
+      }
+      if let range = analysis.nutrition.carbs.range {
+        logBody["carbsRange"] = range
+      }
+      if let range = analysis.nutrition.fat.range {
+        logBody["fatRange"] = range
+      }
+
       let logResponse: LogMealResponse = try await post(
         "/api/log-meal",
-        body: [
-          "source": "ios-dat-companion",
-          "status": "logged",
-          "triggered": true,
-          "transcript": transcript,
-          "mealName": analysis.mealName,
-          "calories": analysis.nutrition.calories.value,
-          "protein": analysis.nutrition.protein.value,
-          "carbs": analysis.nutrition.carbs.value,
-          "fat": analysis.nutrition.fat.value,
-          "imageLabel": "dat-photo",
-          "thumbnailDataUrl": dataURL,
-          "uncertainty": analysis.uncertainty ?? "",
-          "mode": analysisResponse.mode ?? "xai",
-          "note": "Captured through the iOS DAT companion, center-cropped before analysis.",
-        ]
+        body: logBody
       )
 
       if let log = logResponse.log {
@@ -75,8 +103,6 @@ final class ItadakiMealLogViewModel {
     } catch {
       showError("Meal analysis failed: \(error.localizedDescription)")
     }
-
-    isAnalyzing = false
   }
 
   private func get<T: Decodable>(_ path: String) async throws -> T {

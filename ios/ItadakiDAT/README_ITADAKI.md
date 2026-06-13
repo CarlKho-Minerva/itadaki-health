@@ -40,6 +40,24 @@ hands/meal gesture or double tap -> foreground DAT capture -> stop stream after 
 
 If DAT exposes captouch or EMG events on the target device, wire that event to the same capture action. If not, keep the `Listen` and `Arm` buttons and narrate the intended gesture interaction during the screen recording.
 
+### Gesture Reality Check
+
+The DAT package in this branch exposes camera streaming, photo capture, and display tap handlers. The only `captouch` API visible in the installed SDK is under `MWDATMockDevice`, where it simulates `tap()` and `tapAndHold()` for tests. I do not see a production iOS API for a hand-prayer pose, Neural Band EMG stream, or real captouch event listener in this SDK surface.
+
+For the live demo, use:
+
+```text
+tap capture / short Listen -> DAT stream starts -> first frame captured -> stream stops
+```
+
+For the pitch, describe the hand gesture as the intended low-power interaction once Meta exposes the gesture hook to DAT apps.
+
+### MockDeviceKit
+
+`MWDATMockDevice` is the simulator and UI-test harness from Meta's sample app. It lets us pair a fake Ray-Ban device, feed test media, and simulate tap/tap-hold without real glasses. It is DEBUG-only in `ItadakiDATApp.swift` and is not part of the real glasses capture flow.
+
+Keep it for now because it is useful when the glasses are not nearby. Hide it during demos by ignoring the small developer button, or build a Release configuration later without the mock-device dependency.
+
 ## Setup On iPhone
 
 ### Fast Simulator Check
@@ -143,10 +161,10 @@ If registration fails or Meta AI refuses the callback, this is the first thing t
 - `MWDATCamera`: low-resolution camera stream and JPEG photo capture.
 - `MWDATMockDevice`: simulator/dev testing without real hardware.
 - `MWDATDisplay`: later path for native display cards, if needed.
-- Michelle (`hhizzuk`) owns the future FHIR branch. Do not mix real PHI into this demo branch.
+- Michelle (`hhizzuk`) owns the FHIR / risk-intelligence lane. Do not mix real PHI into this demo branch.
 
 ## Next Step After The Hackathon
 
 - Add an explicit hand/EMG gesture trigger if DAT exposes the event for your device.
 - Use xAI STT only as foreground opt-in capture, not silent background listening.
-- Add FHIR mapping after the meal log schema stabilizes.
+- Expand Michelle's FHIR mapping after the meal log schema stabilizes.

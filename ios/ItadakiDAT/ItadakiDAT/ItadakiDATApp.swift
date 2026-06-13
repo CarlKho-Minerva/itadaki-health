@@ -63,7 +63,15 @@ struct ItadakiDATApp: App {
     WindowGroup {
       ZStack {
         // Main app view with access to the shared Wearables SDK instance.
+        #if DEBUG
+        MainAppView(
+          wearables: wearables,
+          viewModel: wearablesViewModel,
+          debugAction: { debugMenuViewModel.showDebugMenu = true }
+        )
+        #else
         MainAppView(wearables: wearables, viewModel: wearablesViewModel)
+        #endif
 
         RegistrationView(viewModel: wearablesViewModel)
           .frame(width: 0, height: 0)
@@ -85,9 +93,6 @@ struct ItadakiDATApp: App {
         #if DEBUG
       .sheet(isPresented: $debugMenuViewModel.showDebugMenu) {
         MockDeviceKitView(viewModel: debugMenuViewModel.mockDeviceKitViewModel)
-      }
-      .overlay {
-        DebugMenuView(debugMenuViewModel: debugMenuViewModel)
       }
         #endif
     }

@@ -21,11 +21,11 @@ const principles = [
   },
   {
     label: "Context after capture",
-    text: "A single card connects calories to synthetic Health Passport context.",
+    text: "A single card saves calories, uncertainty, and the image behind the estimate.",
   },
   {
     label: "One useful question",
-    text: "The output is a better clinician question, not a diagnosis.",
+    text: "Later, the same log can become a care question or FHIR export without judging the meal.",
   },
 ];
 
@@ -94,7 +94,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
           <h1>The meal is already here.</h1>
           <p>
             Itadaki turns one meal photo from Meta Ray-Ban Display into a calorie estimate,
-            a Health Passport memory, and one question worth asking later.
+            a clean log card, and a FHIR-ready event for Michelle&apos;s lane.
           </p>
           <div className="deck-cta-row">
             <a className="deck-dark-link" href="#script">
@@ -144,7 +144,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band problem-band">
         <div>
           <span className="deck-kicker">Problem</span>
-          <h2>Food logging is easy now. Intent and medical context are still missing.</h2>
+          <h2>Food logging is easy now. Intent is still missing.</h2>
         </div>
         <p>
           Cal AI made the behavior obvious: take a photo, get calories, keep history. Smart
@@ -189,7 +189,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
           <h2>Gesture, photo, calories, context.</h2>
           <p>
             The demo stays small on purpose. The glasses surface only needs a number. The phone
-            keeps the photo, the log card, and the Health Passport explanation.
+            keeps the photo, the log card, and the trend-aware export path.
           </p>
         </div>
         <div className="deck-flow-rail">
@@ -218,7 +218,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
         <article>
           <span>Care output</span>
           <strong>1</strong>
-          <p>Question saved for a clinician.</p>
+          <p>FHIR-ready event generated.</p>
         </article>
       </section>
 

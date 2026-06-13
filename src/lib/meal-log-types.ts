@@ -1,3 +1,9 @@
+export type MealLogItem = {
+  name: string;
+  amount: string;
+  confidence?: number;
+};
+
 export type MealLog = {
   id: string;
   timestamp: string;
@@ -10,11 +16,17 @@ export type MealLog = {
   protein?: number;
   carbs?: number;
   fat?: number;
+  sodium?: number;
   imageLabel?: string;
   thumbnailDataUrl?: string;
   uncertainty?: string;
   mode?: string;
   note?: string;
+  calorieRange?: string;
+  proteinRange?: string;
+  carbsRange?: string;
+  fatRange?: string;
+  items?: MealLogItem[];
 };
 
 export type MealLogInput = Partial<Omit<MealLog, "id" | "timestamp">> & {

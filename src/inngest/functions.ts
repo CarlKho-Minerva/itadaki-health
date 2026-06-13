@@ -27,7 +27,7 @@ export const mealAnalyzed = inngest.createFunction(
 export const timelineUpdated = inngest.createFunction(
   {
     id: "timeline-updated",
-    name: "Health Passport timeline updated",
+    name: "Meal timeline updated",
     triggers: [{ event: "timeline.updated" }],
   },
   async ({ event, step }) => {
@@ -39,11 +39,26 @@ export const timelineUpdated = inngest.createFunction(
 export const careContextGenerated = inngest.createFunction(
   {
     id: "care-context-generated",
-    name: "Care context generated",
+    name: "Awareness context generated",
     triggers: [{ event: "care_context.generated" }],
   },
   async ({ event, step }) => {
-    const payload = await step.run("record clinician question", async () => event.data);
+    const payload = await step.run("record awareness question", async () => event.data);
+    return { ok: true, payload };
+  },
+);
+
+// Health Risk Intelligence Layer: records the generated FHIR CarePlan so the
+// rule-based risk trend is visible in the Inngest trace alongside the rest of
+// the pipeline. Additive — it does not alter the existing functions above.
+export const carePlanGenerated = inngest.createFunction(
+  {
+    id: "care-plan-generated",
+    name: "Risk CarePlan generated",
+    triggers: [{ event: "care_plan.generated" }],
+  },
+  async ({ event, step }) => {
+    const payload = await step.run("record care plan", async () => event.data);
     return { ok: true, payload };
   },
 );
@@ -53,4 +68,5 @@ export const functions = [
   mealAnalyzed,
   timelineUpdated,
   careContextGenerated,
+  carePlanGenerated,
 ];

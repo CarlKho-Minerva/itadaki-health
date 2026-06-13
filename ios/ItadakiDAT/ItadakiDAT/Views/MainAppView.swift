@@ -20,10 +20,11 @@ import SwiftUI
 struct MainAppView: View {
   let wearables: WearablesInterface
   var viewModel: WearablesViewModel
+  var debugAction: (() -> Void)?
 
   var body: some View {
     if viewModel.registrationState == .registered {
-      ItadakiCaptureView(wearables: wearables, wearablesVM: viewModel)
+      ItadakiCaptureView(wearables: wearables, wearablesVM: viewModel, debugAction: debugAction)
     } else {
       // User not registered - show registration/onboarding flow
       HomeScreenView(viewModel: viewModel)

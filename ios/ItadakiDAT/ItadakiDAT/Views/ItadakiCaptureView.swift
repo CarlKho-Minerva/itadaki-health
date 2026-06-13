@@ -4,16 +4,19 @@ import SwiftUI
 struct ItadakiCaptureView: View {
   let wearables: WearablesInterface
   var wearablesViewModel: WearablesViewModel
+  var debugAction: (() -> Void)?
 
   @State private var streamViewModel: StreamSessionViewModel
   @State private var mealLogViewModel = ItadakiMealLogViewModel()
   @State private var wakePhraseViewModel = WakePhraseViewModel()
   @State private var pendingPhoto: UIImage?
   @State private var showConfirmPhoto = false
+  @State private var selectedLog: MealLogCard?
 
-  init(wearables: WearablesInterface, wearablesVM: WearablesViewModel) {
+  init(wearables: WearablesInterface, wearablesVM: WearablesViewModel, debugAction: (() -> Void)? = nil) {
     self.wearables = wearables
     self.wearablesViewModel = wearablesVM
+    self.debugAction = debugAction
     self._streamViewModel = State(wrappedValue: StreamSessionViewModel(wearables: wearables))
   }
 
@@ -23,11 +26,10 @@ struct ItadakiCaptureView: View {
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
             header
-            triggerPanel
             capturePanel
             summaryRow
-            awarenessCard
             recentlyLogged
+            archivePanel
           }
           .padding(24)
           .padding(.bottom, 96)
@@ -39,10 +41,22 @@ struct ItadakiCaptureView: View {
       }
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItem(placement: .topBarTrailing) {
-          Button("Refresh") {
-            Task { await mealLogViewModel.refreshLogs() }
+        ToolbarItemGroup(placement: .topBarTrailing) {
+          if let debugAction {
+            Button {
+              debugAction()
+            } label: {
+              Image(systemName: "ladybug.fill")
+            }
+            .accessibilityLabel("Developer tools")
           }
+
+          Button {
+            Task { await mealLogViewModel.refreshLogs() }
+          } label: {
+            Image(systemName: "arrow.clockwise")
+          }
+          .accessibilityLabel("Refresh logs")
         }
       }
       .task {
@@ -77,6 +91,9 @@ struct ItadakiCaptureView: View {
             }
           )
         }
+      }
+      .sheet(item: $selectedLog) { log in
+        ItadakiLogDetailView(log: log)
       }
       .alert("Itadaki", isPresented: $mealLogViewModel.showError) {
         Button("OK") {}
@@ -284,24 +301,6 @@ struct ItadakiCaptureView: View {
     }
   }
 
-  private var awarenessCard: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text("Health Passport context")
-        .font(.system(size: 15, weight: .heavy))
-        .foregroundStyle(.secondary)
-      Text("This is not food policing.")
-        .font(.system(size: 24, weight: .heavy))
-      Text("The meal is already here. Itadaki turns it into health memory: calories now, lab context and FHIR records next.")
-        .font(.system(size: 16, weight: .medium))
-        .foregroundStyle(.secondary)
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(20)
-    .background(Color.white)
-    .clipShape(RoundedRectangle(cornerRadius: 24))
-    .shadow(color: .black.opacity(0.06), radius: 18, y: 8)
-  }
-
   private var recentlyLogged: some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("Recently logged")
@@ -317,10 +316,36 @@ struct ItadakiCaptureView: View {
           .clipShape(RoundedRectangle(cornerRadius: 22))
       } else {
         ForEach(mealLogViewModel.logs) { log in
-          ItadakiLogCard(log: log)
+          Button {
+            selectedLog = log
+          } label: {
+            ItadakiLogCard(log: log)
+          }
+          .buttonStyle(.plain)
         }
       }
     }
+  }
+
+  private var archivePanel: some View {
+    DisclosureGroup {
+      triggerPanel
+        .padding(.top, 12)
+    } label: {
+      HStack(spacing: 10) {
+        Image(systemName: "archivebox")
+        Text("Archive controls")
+        Spacer()
+        Text("Intent trigger")
+          .font(.system(size: 12, weight: .bold))
+          .foregroundStyle(.secondary)
+      }
+      .font(.system(size: 16, weight: .heavy))
+    }
+    .padding(18)
+    .background(Color.white)
+    .clipShape(RoundedRectangle(cornerRadius: 22))
+    .shadow(color: .black.opacity(0.04), radius: 14, y: 8)
   }
 
   private var captureButton: some View {
@@ -420,6 +445,10 @@ struct ItadakiLogCard: View {
         .font(.system(size: 15, weight: .bold))
         .foregroundStyle(.secondary)
       }
+
+      Image(systemName: "chevron.right")
+        .font(.system(size: 14, weight: .heavy))
+        .foregroundStyle(.secondary)
     }
     .padding(14)
     .background(Color(red: 0.945, green: 0.945, blue: 0.965))
@@ -428,7 +457,7 @@ struct ItadakiLogCard: View {
 
   @ViewBuilder
   private var thumbnail: some View {
-    if let image = imageFromDataURL(log.thumbnailDataUrl) {
+    if let image = itadakiImageFromDataURL(log.thumbnailDataUrl) {
       Image(uiImage: image)
         .resizable()
         .scaledToFill()
@@ -444,22 +473,131 @@ struct ItadakiLogCard: View {
         )
     }
   }
+}
 
-  private func imageFromDataURL(_ dataURL: String?) -> UIImage? {
-    guard
-      let dataURL,
-      let comma = dataURL.firstIndex(of: ",")
-    else {
-      return nil
+struct ItadakiLogDetailView: View {
+  let log: MealLogCard
+
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 20) {
+        Capsule()
+          .fill(Color.black.opacity(0.18))
+          .frame(width: 48, height: 5)
+          .frame(maxWidth: .infinity)
+          .padding(.top, 10)
+
+        if let image = itadakiImageFromDataURL(log.thumbnailDataUrl) {
+          Image(uiImage: image)
+            .resizable()
+            .scaledToFill()
+            .frame(height: 280)
+            .clipShape(RoundedRectangle(cornerRadius: 28))
+        }
+
+        VStack(alignment: .leading, spacing: 8) {
+          Text(log.mealName)
+            .font(.system(size: 30, weight: .heavy))
+          Text("\(log.timeLabel) · \(log.source)")
+            .font(.system(size: 14, weight: .bold))
+            .foregroundStyle(.secondary)
+        }
+
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+          DetailMetricChip(title: "Calories", value: "\(Int(log.calories))", detail: log.calorieRange)
+          DetailMetricChip(title: "Protein", value: "\(Int(log.protein ?? 0))g", detail: log.proteinRange)
+          DetailMetricChip(title: "Carbs", value: "\(Int(log.carbs ?? 0))g", detail: log.carbsRange)
+          DetailMetricChip(title: "Fat", value: "\(Int(log.fat ?? 0))g", detail: log.fatRange)
+        }
+
+        if let items = log.items, !items.isEmpty {
+          VStack(alignment: .leading, spacing: 12) {
+            Text("Estimated items")
+              .font(.system(size: 20, weight: .heavy))
+            ForEach(items) { item in
+              HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 4) {
+                  Text(item.name)
+                    .font(.system(size: 16, weight: .heavy))
+                  Text(item.amount)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                }
+                Spacer()
+                if let confidence = item.confidence {
+                  Text("\(Int(confidence * 100))%")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.secondary)
+                }
+              }
+              .padding(14)
+              .background(Color.black.opacity(0.04))
+              .clipShape(RoundedRectangle(cornerRadius: 18))
+            }
+          }
+        }
+
+        if let uncertainty = log.uncertainty, !uncertainty.isEmpty {
+          VStack(alignment: .leading, spacing: 8) {
+            Text("Uncertainty")
+              .font(.system(size: 20, weight: .heavy))
+            Text(uncertainty)
+              .font(.system(size: 15, weight: .medium))
+              .foregroundStyle(.secondary)
+          }
+        }
+
+        if let note = log.note, !note.isEmpty {
+          Text(note)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(.secondary)
+        }
+      }
+      .padding(24)
     }
-
-    let base64 = String(dataURL[dataURL.index(after: comma)...])
-    guard let data = Data(base64Encoded: base64) else {
-      return nil
-    }
-
-    return UIImage(data: data)
+    .background(Color(red: 0.985, green: 0.985, blue: 0.965))
   }
+}
+
+struct DetailMetricChip: View {
+  let title: String
+  let value: String
+  let detail: String?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text(title)
+        .font(.system(size: 13, weight: .bold))
+        .foregroundStyle(.secondary)
+      Text(value)
+        .font(.system(size: 24, weight: .heavy))
+      if let detail, !detail.isEmpty {
+        Text(detail)
+          .font(.system(size: 12, weight: .semibold))
+          .foregroundStyle(.secondary)
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(16)
+    .background(Color.white)
+    .clipShape(RoundedRectangle(cornerRadius: 20))
+  }
+}
+
+fileprivate func itadakiImageFromDataURL(_ dataURL: String?) -> UIImage? {
+  guard
+    let dataURL,
+    let comma = dataURL.firstIndex(of: ",")
+  else {
+    return nil
+  }
+
+  let base64 = String(dataURL[dataURL.index(after: comma)...])
+  guard let data = Data(base64Encoded: base64) else {
+    return nil
+  }
+
+  return UIImage(data: data)
 }
 
 struct ConfirmPhotoView: View {
