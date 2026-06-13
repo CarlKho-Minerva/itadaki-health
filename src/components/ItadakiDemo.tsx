@@ -339,6 +339,9 @@ export default function ItadakiDemo() {
         <a className="logs-link secondary" href="/architecture">
           Open Architecture
         </a>
+        <a className="logs-link secondary" href="/demo-script">
+          Open Presenter Notes
+        </a>
         <a className="logs-link secondary" href="/api/health-passport">
           Export Health Passport Markdown
         </a>

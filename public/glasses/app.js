@@ -5,8 +5,16 @@
     imageData: null,
     analysis: {
       mealName: "Sweetgreen Harvest Bowl",
-      nutrition: { calories: { value: 705 } },
+      nutrition: {
+        calories: { value: 705 },
+        protein: { value: 39 },
+        carbs: { value: 74 },
+        fat: { value: 29 },
+      },
     },
+    latestLog: null,
+    idleTimer: null,
+    breakdownTimer: null,
     lastRow: "",
   };
 
@@ -41,6 +49,12 @@
       return;
     }
 
+    if (event.key === "ArrowRight" && activeScreenId() === "listen" && state.latestLog) {
+      event.preventDefault();
+      showBreakdown();
+      return;
+    }
+
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
       event.preventDefault();
       moveFocus(event.key === "ArrowLeft" ? -1 : 1);
@@ -58,11 +72,20 @@
   }
 
   function show(id) {
+    window.clearTimeout(state.breakdownTimer);
     Array.prototype.forEach.call(document.querySelectorAll(".screen"), function (screen) {
       screen.classList.toggle("hidden", screen.id !== id);
       screen.classList.toggle("active", screen.id === id);
+      screen.classList.remove("flash");
     });
+    var active = document.getElementById(id);
+    if (active) active.classList.add("flash");
     window.setTimeout(focusFirst, 20);
+  }
+
+  function activeScreenId() {
+    var active = document.querySelector(".screen.active");
+    return active ? active.id : "";
   }
 
   function focusFirst() {
@@ -85,6 +108,14 @@
     if (el) el.textContent = value;
   }
 
+  function updateDimTimer() {
+    window.clearTimeout(state.idleTimer);
+    document.body.classList.remove("dimmed");
+    state.idleTimer = window.setTimeout(function () {
+      document.body.classList.add("dimmed");
+    }, 4200);
+  }
+
   function listen() {
     setText("listen-status", "MRBD Web Apps do not expose mic yet. Use iPhone.");
   }
@@ -98,6 +129,7 @@
       .then(function (payload) {
         var log = payload.logs && payload.logs[0];
         if (!log) {
+          state.latestLog = null;
           setText("home-calories", "--");
           setText("recent-calories", "--");
           setText("recent-meal", "No synced meal yet.");
@@ -105,10 +137,16 @@
           if (!stayHome) show("recent");
           return;
         }
+        state.latestLog = log;
         setText("home-calories", String(log.calories || "--"));
         setText("listen-status", log.mealName || "Latest meal");
+        setText("protein", valueWithUnit(log.protein, "g"));
+        setText("carbs", valueWithUnit(log.carbs, "g"));
+        setText("fat", valueWithUnit(log.fat, "g"));
+        setText("trend", trendText(log));
         setText("recent-calories", String(log.calories || "--"));
         setText("recent-meal", log.mealName || "Latest meal");
+        updateDimTimer();
         if (!stayHome) show("recent");
       })
       .catch(function () {
@@ -125,7 +163,12 @@
     state.triggered = true;
     state.analysis = {
       mealName: "Demo meal",
-      nutrition: { calories: { value: 705 } },
+      nutrition: {
+        calories: { value: 705 },
+        protein: { value: 39 },
+        carbs: { value: 74 },
+        fat: { value: 29 },
+      },
     };
     renderResult();
     show("result");
@@ -176,6 +219,42 @@
       state.analysis.nutrition.calories.value;
     setText("calories", calories || "705");
     setText("meal-name", state.analysis.mealName || "Estimated meal");
+    setText("protein", valueWithUnit(metricValue("protein"), "g"));
+    setText("carbs", valueWithUnit(metricValue("carbs"), "g"));
+    setText("fat", valueWithUnit(metricValue("fat"), "g"));
+    setText("trend", "Five-meal trend saved on phone.");
+    updateDimTimer();
+  }
+
+  function metricValue(key) {
+    return (
+      state.analysis &&
+      state.analysis.nutrition &&
+      state.analysis.nutrition[key] &&
+      state.analysis.nutrition[key].value
+    );
+  }
+
+  function valueWithUnit(value, unit) {
+    var number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) return "--" + unit;
+    return Math.round(number) + unit;
+  }
+
+  function trendText(log) {
+    var calories = Number(log && log.calories);
+    if (Number.isFinite(calories) && calories >= 800) {
+      return "Heavier meal. Review trend on phone.";
+    }
+    return "Five-meal trend saved on phone.";
+  }
+
+  function showBreakdown() {
+    show("breakdown");
+    state.breakdownTimer = window.setTimeout(function () {
+      show("listen");
+      updateDimTimer();
+    }, 3000);
   }
 
   function log() {
@@ -197,12 +276,26 @@
       })
       .then(function (payload) {
         state.lastRow = payload.csvRow || state.analysis.mealName + "," + calories;
+        state.latestLog = payload.log || {
+          mealName: state.analysis.mealName,
+          calories: calories,
+          protein: metricValue("protein"),
+          carbs: metricValue("carbs"),
+          fat: metricValue("fat"),
+        };
         localStorage.setItem("itadaki:last-row", state.lastRow);
         setText("saved-row", state.lastRow);
         show("saved");
       })
       .catch(function () {
         state.lastRow = state.analysis.mealName + "," + calories;
+        state.latestLog = {
+          mealName: state.analysis.mealName,
+          calories: calories,
+          protein: metricValue("protein"),
+          carbs: metricValue("carbs"),
+          fat: metricValue("fat"),
+        };
         localStorage.setItem("itadaki:last-row", state.lastRow);
         setText("saved-row", state.lastRow);
         show("saved");

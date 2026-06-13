@@ -14,6 +14,7 @@
         <p class="kicker">Calories</p>
         <h1 id="home-calories">--</h1>
         <p id="listen-status" class="hint">Capture with the iPhone DAT companion.</p>
+        <p class="swipe-hint">Swipe right for macros</p>
         <div class="actions">
           <button class="focusable" data-action="recent">Refresh</button>
           <button class="focusable" data-action="trigger">Demo</button>
@@ -62,6 +63,16 @@
           <button class="focusable" data-action="recent">Refresh</button>
           <button class="focusable" data-action="restart">Back</button>
         </div>
+      </section>
+
+      <section id="breakdown" class="screen hidden">
+        <p class="kicker">Breakdown</p>
+        <div class="macro-stack" aria-label="Meal macro breakdown">
+          <p><span>Protein</span><strong id="protein">--g</strong></p>
+          <p><span>Carbs</span><strong id="carbs">--g</strong></p>
+          <p><span>Fat</span><strong id="fat">--g</strong></p>
+        </div>
+        <p id="trend" class="hint">Five-meal trend saved on phone.</p>
       </section>
     </main>
     <script src="/glasses/app.js"></script>

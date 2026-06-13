@@ -12,6 +12,7 @@ import {
   DEFAULT_USER_ID,
   mealRecordFromAnalysis,
   runRiskIntelligence,
+  type RiskIntelligence,
 } from "@/lib/risk-intelligence";
 
 export const runtime = "nodejs";
@@ -36,6 +37,10 @@ async function respond(
   // store meal -> run risk engine -> generate CarePlan
   const meal = mealRecordFromAnalysis(analysis, userId, sugar);
   const intel = runRiskIntelligence(meal, analysis.clinicalContext.profileName);
+  const trendAwareAnalysis: MealAnalysis = {
+    ...analysis,
+    audioBrief: trendAudioBrief(analysis, intel),
+  };
   await sendEvent("care_plan.generated", {
     userId,
     score: intel.risk.score,
@@ -54,7 +59,7 @@ async function respond(
     });
   }
   return Response.json({
-    analysis,
+    analysis: trendAwareAnalysis,
     mode,
     fhir,
     riskIntelligence: {
@@ -64,6 +69,22 @@ async function respond(
     },
     ...extra,
   });
+}
+
+function trendAudioBrief(analysis: MealAnalysis, intel: RiskIntelligence) {
+  const calories = Math.round(analysis.nutrition.calories.value);
+  const mealCount = intel.recentMeals.length;
+  const hasTrend = intel.risk.risks.length > 0;
+
+  if (mealCount < 3) {
+    return `Logged ${calories} calories. Building your five meal trend.`;
+  }
+
+  if (hasTrend) {
+    return `Logged ${calories} calories. One trend to review later.`;
+  }
+
+  return `Logged ${calories} calories. Your five meal trend looks steady.`;
 }
 
 type AnalyzeRequest = {

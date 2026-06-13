@@ -39,6 +39,17 @@ body {
   display: none;
 }
 
+.flash {
+  animation: flash-in 320ms ease-out;
+}
+
+.dimmed h1,
+.dimmed .hint,
+.dimmed .swipe-hint {
+  opacity: 0.42;
+  transition: opacity 420ms ease;
+}
+
 .kicker {
   margin: 0 0 28px;
   color: var(--green);
@@ -68,6 +79,40 @@ h1 {
   color: var(--muted);
   font-size: 28px;
   line-height: 1.22;
+}
+
+.swipe-hint {
+  position: absolute;
+  left: 54px;
+  bottom: 154px;
+  color: var(--dim);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.macro-stack {
+  display: grid;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.macro-stack p {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--dim);
+  padding: 0 0 18px;
+}
+
+.macro-stack span {
+  color: var(--muted);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.macro-stack strong {
+  font-size: 54px;
+  line-height: 1;
 }
 
 .actions {
@@ -104,6 +149,18 @@ button.solo {
   border-color: var(--green);
   color: #061107;
   background: var(--green);
+}
+
+@keyframes flash-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 600px) {

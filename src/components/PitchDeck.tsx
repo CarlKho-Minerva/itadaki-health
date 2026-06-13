@@ -81,6 +81,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
         <Link href="/">Demo</Link>
         <Link href="/logs">Logs</Link>
         <Link href="/architecture">Architecture</Link>
+        <Link href="/demo-script">Script</Link>
         <a href="/glasses/index.html">Glasses</a>
       </nav>
 

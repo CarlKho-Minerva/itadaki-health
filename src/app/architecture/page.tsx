@@ -34,6 +34,13 @@ const passportPayload = [
   "CarePlan trend hooks",
 ];
 
+const importSteps = [
+  "Connect HealthEx-style patient record access",
+  "Import labs, medications, visit notes, and problem list",
+  "Add Itadaki meal logs as patient-owned daily context",
+  "Chat with the combined Health Passport timeline",
+];
+
 export default function ArchitecturePage() {
   return (
     <main className="architecture-shell">
@@ -98,10 +105,28 @@ export default function ArchitecturePage() {
         <pre>{mermaid}</pre>
       </section>
 
+      <section className="architecture-import">
+        <div>
+          <span className="deck-kicker">Health data import</span>
+          <h2>Mock HealthEx connect flow.</h2>
+          <p>
+            For the demo, this is a safe mock. The product story is simple: patient records come in
+            through a consented import, meal logs join the timeline, then Health Passport can answer
+            questions from both clinical records and daily behavior.
+          </p>
+        </div>
+        <ol>
+          {importSteps.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ol>
+      </section>
+
       <section className="architecture-links">
         <a href="/api/health-passport">Health Passport markdown</a>
         <a href="/api/risk?userId=demo-user">Risk JSON</a>
         <a href="/api/analyze-meal?format=careplan">CarePlan shape</a>
+        <a href="/demo-script">Presenter notes</a>
       </section>
     </main>
   );
