@@ -3,76 +3,31 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=600, height=600, initial-scale=1" />
-    <meta name="description" content="Itadaki Health calories MVP for Meta Ray-Ban Display." />
+    <meta name="description" content="Itadaki Health notification HUD for Meta Ray-Ban Display." />
     <meta name="mrb-compatible" content="yes" />
-    <title>Itadaki Calories</title>
+    <title>Itadaki HUD</title>
     <link rel="stylesheet" href="/glasses/styles.css" />
   </head>
   <body>
-    <main class="app" aria-label="Itadaki Health calories MVP">
-      <section id="listen" class="screen active">
-        <p class="kicker">Calories</p>
-        <h1 id="home-calories">--</h1>
-        <p id="listen-status" class="hint">Capture with the iPhone DAT companion.</p>
-        <p class="swipe-hint">Swipe right for macros</p>
-        <div class="actions">
-          <button class="focusable" data-action="recent">Refresh</button>
-          <button class="focusable" data-action="trigger">Demo</button>
+    <main class="hud" aria-label="Itadaki Health meal notification HUD">
+      <section id="idle" class="screen active" aria-live="polite">
+        <button id="arm-button" class="arm-button" type="button" aria-label="Arm Itadaki audio and refresh">
+          <span></span>
+        </button>
+      </section>
+
+      <section id="pulse" class="screen hidden" aria-live="assertive">
+        <p class="kicker">Meal logged</p>
+        <div class="calorie-line">
+          <span>Calories</span>
+          <strong id="calories">--</strong>
         </div>
-      </section>
-
-      <section id="image" class="screen hidden">
-        <p class="kicker">Image</p>
-        <h1>Add food</h1>
-        <p id="image-status" class="hint">Photo if supported. Sample if not.</p>
-        <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
-        <div class="actions">
-          <button class="focusable" data-action="photo">Photo</button>
-          <button class="focusable" data-action="sample">Sample</button>
-        </div>
-      </section>
-
-      <section id="loading" class="screen hidden">
-        <p class="kicker">Grok</p>
-        <h1>Estimating</h1>
-        <p class="hint">Food image to calories.</p>
-      </section>
-
-      <section id="result" class="screen hidden">
-        <p class="kicker">Calories</p>
-        <h1 id="calories">705</h1>
-        <p id="meal-name" class="hint">Sweetgreen Harvest Bowl</p>
-        <div class="actions">
-          <button class="focusable" data-action="log">Log</button>
-          <button class="focusable" data-action="restart">Again</button>
-        </div>
-      </section>
-
-      <section id="saved" class="screen hidden">
-        <p class="kicker">CSV</p>
-        <h1>Logged</h1>
-        <p id="saved-row" class="hint">Meal row saved.</p>
-        <button class="focusable solo" data-action="restart">Done</button>
-      </section>
-
-      <section id="recent" class="screen hidden">
-        <p class="kicker">Latest log</p>
-        <h1 id="recent-calories">--</h1>
-        <p id="recent-meal" class="hint">No synced meal yet.</p>
-        <div class="actions">
-          <button class="focusable" data-action="recent">Refresh</button>
-          <button class="focusable" data-action="restart">Back</button>
-        </div>
-      </section>
-
-      <section id="breakdown" class="screen hidden">
-        <p class="kicker">Breakdown</p>
-        <div class="macro-stack" aria-label="Meal macro breakdown">
+        <div class="macro-grid" aria-label="Meal macro estimate">
           <p><span>Protein</span><strong id="protein">--g</strong></p>
           <p><span>Carbs</span><strong id="carbs">--g</strong></p>
           <p><span>Fat</span><strong id="fat">--g</strong></p>
         </div>
-        <p id="trend" class="hint">Five-meal trend saved on phone.</p>
+        <p id="trend" class="trend">Five-meal trend saved.</p>
       </section>
     </main>
     <script src="/glasses/app.js"></script>

@@ -20,7 +20,7 @@ export default function DemoScriptPage() {
         <h1>Three minutes. Show the patient workflow.</h1>
         <p>
           Lead with the working capture, then answer the founder feedback: what happens after
-          logging? Five-meal trend, FHIR handoff, Health Passport chat.
+          logging? Five-meal reinforcement, patient-owned records, Health Passport chat.
         </p>
       </section>
 
@@ -50,9 +50,9 @@ export default function DemoScriptPage() {
         <article className="script-card">
           <h2>Patient story</h2>
           <p>
-            Carl is not trying to block a meal after it is already on the table. He is trying to
-            give a patient and dietician a better memory: what was eaten, what the estimate was,
-            and whether the last five meals show a pattern.
+            Carl is not trying to block a meal after it is already on the table. This is a B2C
+            Health Passport wedge: the patient gets a private timeline first, then chooses what to
+            share with a dietician or clinician.
           </p>
           <p>
             HealthEx-style import is the bridge: labs and notes come from patient-directed records;

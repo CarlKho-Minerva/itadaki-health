@@ -49,6 +49,7 @@ export function mealLogsToHealthPassportMarkdown(logs: MealLog[]) {
         field("Calories", `${log.calories}${log.calorieRange ? ` kcal (${log.calorieRange})` : " kcal"}`),
         macroLine(log),
         field("Uncertainty", log.uncertainty),
+        field("Wearable reinforcement", log.audioBrief),
         field("Mode", log.mode),
         field("Note", log.note),
         items(log),

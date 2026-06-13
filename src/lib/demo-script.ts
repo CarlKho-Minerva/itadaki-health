@@ -36,19 +36,19 @@ export const threeMinuteScript = [
   {
     time: "1:10-1:35",
     line:
-      "The glasses should not become a dashboard on my face. They flash calories, let me swipe once for macros, then get out of the way.",
-    action: "Open the glasses Web App, Refresh, then ArrowRight for breakdown.",
+      "The glasses should not become a dashboard on my face. They stay blank, flash calories and macros for three seconds, speak once, then disappear.",
+    action: "Open the glasses Web App before logging; let the latest log pulse in automatically.",
   },
   {
     time: "1:35-2:05",
     line:
-      "The real value is what happens after five meals. Michelle maps the last meals into a FHIR-friendly trend so a dietician gets more than memory.",
+      "The real value is what happens after five meals. Michelle maps the last meals into a FHIR-friendly trend, so the user gets reinforcement and a dietician gets more than memory.",
     action: "Open /logs and expand the latest card.",
   },
   {
     time: "2:05-2:30",
     line:
-      "For medical context, we mock a HealthEx-style import: patient-directed records come in, meal logs join the timeline, and Health Passport can chat with the data.",
+      "This is B2C Health Passport: the patient imports records, adds daily context from wearables, and can chat with their own timeline before sharing it with care.",
     action: "Open /architecture or /api/health-passport.",
   },
   {
@@ -72,8 +72,8 @@ export const demoChecklist = [
   "Confirm the captured food photo.",
   "Tap Analyze and log.",
   "Listen for the short audio confirmation.",
-  "Open /glasses/index.html on Meta Web Apps and refresh.",
-  "Swipe right once to show macros for three seconds.",
+  "Keep /glasses/index.html open before capture; it should stay mostly blank.",
+  "Watch calories and macros fade in for three seconds after the new log lands.",
   "Open /logs and expand the latest card.",
   "Open /architecture for the HealthEx/FHIR story.",
 ];

@@ -17,9 +17,10 @@ const mermaid = `flowchart LR
   L --> M[Short audio feedback]`;
 
 const glassesPayload = [
-  "Calories",
-  "One number",
-  "Short audio confirmation",
+  "Blank until needed",
+  "Three-second calorie pulse",
+  "Macros in the same pulse",
+  "Short audio reinforcement",
   "No diagnosis",
 ];
 
@@ -110,9 +111,9 @@ export default function ArchitecturePage() {
           <span className="deck-kicker">Health data import</span>
           <h2>Mock HealthEx connect flow.</h2>
           <p>
-            For the demo, this is a safe mock. The product story is simple: patient records come in
-            through a consented import, meal logs join the timeline, then Health Passport can answer
-            questions from both clinical records and daily behavior.
+            For the demo, this is a safe mock. The B2C thesis is simple: patient records come in
+            through a consented import, meal logs join the timeline, then the patient can chat with
+            their Health Passport before choosing what to share with care.
           </p>
         </div>
         <ol>

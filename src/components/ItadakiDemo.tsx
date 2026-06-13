@@ -165,6 +165,7 @@ export default function ItadakiDemo() {
         imageLabel: imageData ? "uploaded-image" : "sample-image",
         thumbnailDataUrl: imageData || undefined,
         uncertainty: nextAnalysis.uncertainty,
+        audioBrief: nextAnalysis.audioBrief,
         calorieRange: nextAnalysis.nutrition.calories.range,
         proteinRange: nextAnalysis.nutrition.protein.range,
         carbsRange: nextAnalysis.nutrition.carbs.range,

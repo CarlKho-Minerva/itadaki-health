@@ -66,6 +66,7 @@ final class ItadakiMealLogViewModel {
         "imageLabel": "dat-photo",
         "thumbnailDataUrl": thumbnailDataURL,
         "uncertainty": analysis.uncertainty ?? "",
+        "audioBrief": analysis.audioBrief ?? "",
         "mode": analysisResponse.mode ?? "xai",
         "note": "Captured through the iOS DAT companion, food-focus cropped before analysis.",
         "items": (analysis.itemEstimate ?? []).map { item in

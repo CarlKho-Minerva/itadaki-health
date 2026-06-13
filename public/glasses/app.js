@@ -1,244 +1,152 @@
 (function () {
+  var POLL_MS = 1800;
+  var VISIBLE_MS = 3200;
   var state = {
-    transcript: "",
-    triggered: false,
-    imageData: null,
-    analysis: {
-      mealName: "Sweetgreen Harvest Bowl",
-      nutrition: {
-        calories: { value: 705 },
-        protein: { value: 39 },
-        carbs: { value: 74 },
-        fat: { value: 29 },
-      },
-    },
-    latestLog: null,
-    idleTimer: null,
-    breakdownTimer: null,
-    lastRow: "",
+    seenId: localStorage.getItem("itadaki:last-seen-log") || "",
+    audioUnlocked: false,
+    currentAudio: null,
+    pollTimer: null,
+    hideTimer: null,
   };
 
   function init() {
+    document.addEventListener("click", armAndRefresh);
     document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("click", onClick);
-    var input = document.getElementById("photo-input");
-    input.addEventListener("change", onPhoto);
-    focusFirst();
-    loadRecent(true);
-  }
-
-  function onClick(event) {
-    var target = event.target.closest("[data-action]");
-    if (!target) return;
-    act(target.getAttribute("data-action"));
+    var button = document.getElementById("arm-button");
+    if (button) button.addEventListener("click", armAndRefresh);
+    pollLatest({ flashInitial: false });
+    state.pollTimer = window.setInterval(function () {
+      pollLatest({ flashInitial: false });
+    }, POLL_MS);
   }
 
   function onKeyDown(event) {
     if (event.key === "Enter") {
-      var active = document.activeElement;
-      if (active && active.getAttribute("data-action")) {
-        event.preventDefault();
-        act(active.getAttribute("data-action"));
-      }
-      return;
-    }
-
-    if (event.key === "Escape") {
       event.preventDefault();
-      show("listen");
-      return;
+      armAndRefresh();
     }
 
-    if (event.key === "ArrowRight" && activeScreenId() === "listen" && state.latestLog) {
+    if (event.key === "ArrowRight") {
       event.preventDefault();
-      showBreakdown();
-      return;
-    }
-
-    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-      event.preventDefault();
-      moveFocus(event.key === "ArrowLeft" ? -1 : 1);
+      pulseDemo();
     }
   }
 
-  function act(action) {
-    if (action === "listen") return listen();
-    if (action === "recent") return loadRecent();
-    if (action === "trigger") return manualTrigger();
-    if (action === "photo") return document.getElementById("photo-input").click();
-    if (action === "sample") return analyze();
-    if (action === "log") return log();
-    if (action === "restart") return restart();
+  function armAndRefresh() {
+    state.audioUnlocked = true;
+    pollLatest({ flashInitial: true });
   }
 
-  function show(id) {
-    window.clearTimeout(state.breakdownTimer);
-    Array.prototype.forEach.call(document.querySelectorAll(".screen"), function (screen) {
-      screen.classList.toggle("hidden", screen.id !== id);
-      screen.classList.toggle("active", screen.id === id);
-      screen.classList.remove("flash");
-    });
-    var active = document.getElementById(id);
-    if (active) active.classList.add("flash");
-    window.setTimeout(focusFirst, 20);
-  }
-
-  function activeScreenId() {
-    var active = document.querySelector(".screen.active");
-    return active ? active.id : "";
-  }
-
-  function focusFirst() {
-    var first = document.querySelector(".screen.active .focusable");
-    if (first) first.focus();
-  }
-
-  function moveFocus(delta) {
-    var items = Array.prototype.slice.call(
-      document.querySelectorAll(".screen.active .focusable"),
-    );
-    if (!items.length) return;
-    var index = items.indexOf(document.activeElement);
-    var next = (Math.max(index, 0) + delta + items.length) % items.length;
-    items[next].focus();
-  }
-
-  function setText(id, value) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = value;
-  }
-
-  function updateDimTimer() {
-    window.clearTimeout(state.idleTimer);
-    document.body.classList.remove("dimmed");
-    state.idleTimer = window.setTimeout(function () {
-      document.body.classList.add("dimmed");
-    }, 4200);
-  }
-
-  function listen() {
-    setText("listen-status", "MRBD Web Apps do not expose mic yet. Use iPhone.");
-  }
-
-  function loadRecent(stayHome) {
-    setText("listen-status", "Syncing latest log...");
-    fetch("/api/logs?limit=1")
+  function pollLatest(options) {
+    fetch("/api/logs?limit=1", { cache: "no-store" })
       .then(function (response) {
         return response.json();
       })
       .then(function (payload) {
         var log = payload.logs && payload.logs[0];
-        if (!log) {
-          state.latestLog = null;
-          setText("home-calories", "--");
-          setText("recent-calories", "--");
-          setText("recent-meal", "No synced meal yet.");
-          setText("listen-status", "No synced meal yet.");
-          if (!stayHome) show("recent");
-          return;
+        if (!log || log.source === "demo-seed") return;
+
+        var isNew = log.id && log.id !== state.seenId;
+        if (isNew || options.flashInitial) {
+          state.seenId = log.id || String(Date.now());
+          localStorage.setItem("itadaki:last-seen-log", state.seenId);
+          flashLog(log);
         }
-        state.latestLog = log;
-        setText("home-calories", String(log.calories || "--"));
-        setText("listen-status", log.mealName || "Latest meal");
-        setText("protein", valueWithUnit(log.protein, "g"));
-        setText("carbs", valueWithUnit(log.carbs, "g"));
-        setText("fat", valueWithUnit(log.fat, "g"));
-        setText("trend", trendText(log));
-        setText("recent-calories", String(log.calories || "--"));
-        setText("recent-meal", log.mealName || "Latest meal");
-        updateDimTimer();
-        if (!stayHome) show("recent");
       })
       .catch(function () {
-        setText("home-calories", "--");
-        setText("listen-status", "Sync failed. Use iPhone app.");
-        setText("recent-calories", "--");
-        setText("recent-meal", "Sync failed. Try again.");
-        if (!stayHome) show("recent");
+        // Keep the HUD blank if sync fails. The phone app still has the log.
       });
   }
 
-  function manualTrigger() {
-    state.transcript = "Itadakimasu";
-    state.triggered = true;
-    state.analysis = {
+  function pulseDemo() {
+    state.audioUnlocked = true;
+    flashLog({
+      id: "demo-" + Date.now(),
       mealName: "Demo meal",
-      nutrition: {
-        calories: { value: 705 },
-        protein: { value: 39 },
-        carbs: { value: 74 },
-        fat: { value: 29 },
-      },
-    };
-    renderResult();
-    show("result");
+      calories: 705,
+      protein: 39,
+      carbs: 74,
+      fat: 29,
+      audioBrief: "Logged 705 calories. Your five meal trend looks steady.",
+    });
   }
 
-  function onPhoto(event) {
-    var file = event.target.files && event.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      state.imageData = String(reader.result);
-      analyze();
-    };
-    reader.readAsDataURL(file);
+  function flashLog(log) {
+    window.clearTimeout(state.hideTimer);
+    setText("calories", roundOrDash(log.calories, ""));
+    setText("protein", roundOrDash(log.protein, "g"));
+    setText("carbs", roundOrDash(log.carbs, "g"));
+    setText("fat", roundOrDash(log.fat, "g"));
+    setText("trend", trendText(log));
+    showPulse();
+    playSpeech(speechText(log));
+    state.hideTimer = window.setTimeout(hidePulse, VISIBLE_MS);
   }
 
-  function analyze() {
-    show("loading");
-    fetch("/api/analyze-meal", {
+  function showPulse() {
+    var idle = document.getElementById("idle");
+    var pulse = document.getElementById("pulse");
+    if (!pulse || !idle) return;
+
+    pulse.classList.remove("hidden", "fading");
+    idle.classList.add("hidden");
+    // Restart CSS animation even when logs arrive close together.
+    void pulse.offsetWidth;
+    pulse.classList.add("active", "visible");
+  }
+
+  function hidePulse() {
+    var idle = document.getElementById("idle");
+    var pulse = document.getElementById("pulse");
+    if (!pulse || !idle) return;
+
+    pulse.classList.remove("visible");
+    pulse.classList.add("fading");
+    window.setTimeout(function () {
+      pulse.classList.add("hidden");
+      pulse.classList.remove("active", "fading");
+      idle.classList.remove("hidden");
+      idle.classList.add("active");
+    }, 540);
+  }
+
+  function playSpeech(text) {
+    if (!text) return;
+    fetch("/api/speak", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        scenarioId: "sweetgreen-harvest",
-        ritual: state.transcript || "itadakimasu",
-        imageData: state.imageData,
-        mealText: "Meta Ray-Ban minimal UI. Return a reliable calories estimate.",
-      }),
+      body: JSON.stringify({ text: text, language: "en" }),
     })
       .then(function (response) {
-        return response.json();
+        if (!response.ok) throw new Error("TTS unavailable");
+        return response.blob();
       })
-      .then(function (payload) {
-        state.analysis = payload.analysis || state.analysis;
-        renderResult();
-        show("result");
+      .then(function (blob) {
+        var url = URL.createObjectURL(blob);
+        if (state.currentAudio) {
+          state.currentAudio.pause();
+          state.currentAudio = null;
+        }
+        var audio = new Audio(url);
+        state.currentAudio = audio;
+        audio.onended = function () {
+          URL.revokeObjectURL(url);
+        };
+        var playPromise = audio.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function () {
+            URL.revokeObjectURL(url);
+          });
+        }
       })
       .catch(function () {
-        renderResult();
-        show("result");
+        // Silent failure keeps the face display calm; the iOS app also speaks.
       });
   }
 
-  function renderResult() {
-    var calories =
-      state.analysis &&
-      state.analysis.nutrition &&
-      state.analysis.nutrition.calories &&
-      state.analysis.nutrition.calories.value;
-    setText("calories", calories || "705");
-    setText("meal-name", state.analysis.mealName || "Estimated meal");
-    setText("protein", valueWithUnit(metricValue("protein"), "g"));
-    setText("carbs", valueWithUnit(metricValue("carbs"), "g"));
-    setText("fat", valueWithUnit(metricValue("fat"), "g"));
-    setText("trend", "Five-meal trend saved on phone.");
-    updateDimTimer();
-  }
-
-  function metricValue(key) {
-    return (
-      state.analysis &&
-      state.analysis.nutrition &&
-      state.analysis.nutrition[key] &&
-      state.analysis.nutrition[key].value
-    );
-  }
-
-  function valueWithUnit(value, unit) {
-    var number = Number(value);
-    if (!Number.isFinite(number) || number <= 0) return "--" + unit;
-    return Math.round(number) + unit;
+  function speechText(log) {
+    if (log.audioBrief) return String(log.audioBrief).slice(0, 160);
+    return "Logged " + roundOrDash(log.calories, "") + " calories. " + trendText(log);
   }
 
   function trendText(log) {
@@ -246,69 +154,18 @@
     if (Number.isFinite(calories) && calories >= 800) {
       return "Heavier meal. Review trend on phone.";
     }
-    return "Five-meal trend saved on phone.";
+    return "Five-meal trend saved.";
   }
 
-  function showBreakdown() {
-    show("breakdown");
-    state.breakdownTimer = window.setTimeout(function () {
-      show("listen");
-      updateDimTimer();
-    }, 3000);
+  function roundOrDash(value, unit) {
+    var number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) return "--" + unit;
+    return String(Math.round(number)) + unit;
   }
 
-  function log() {
-    var calories = state.analysis.nutrition.calories.value;
-    fetch("/api/log-meal", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        source: "meta-glasses",
-        transcript: state.transcript,
-        triggered: state.triggered,
-        mealName: state.analysis.mealName,
-        calories: calories,
-        imageLabel: state.imageData ? "glasses-photo" : "sample-image",
-      }),
-    })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (payload) {
-        state.lastRow = payload.csvRow || state.analysis.mealName + "," + calories;
-        state.latestLog = payload.log || {
-          mealName: state.analysis.mealName,
-          calories: calories,
-          protein: metricValue("protein"),
-          carbs: metricValue("carbs"),
-          fat: metricValue("fat"),
-        };
-        localStorage.setItem("itadaki:last-row", state.lastRow);
-        setText("saved-row", state.lastRow);
-        show("saved");
-      })
-      .catch(function () {
-        state.lastRow = state.analysis.mealName + "," + calories;
-        state.latestLog = {
-          mealName: state.analysis.mealName,
-          calories: calories,
-          protein: metricValue("protein"),
-          carbs: metricValue("carbs"),
-          fat: metricValue("fat"),
-        };
-        localStorage.setItem("itadaki:last-row", state.lastRow);
-        setText("saved-row", state.lastRow);
-        show("saved");
-      });
-  }
-
-  function restart() {
-    state.imageData = null;
-    state.transcript = "";
-    state.triggered = false;
-    setText("listen-status", "Capture with the iPhone DAT companion.");
-    loadRecent(true);
-    show("listen");
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
   }
 
   init();

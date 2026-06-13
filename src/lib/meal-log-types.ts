@@ -20,6 +20,7 @@ export type MealLog = {
   imageLabel?: string;
   thumbnailDataUrl?: string;
   uncertainty?: string;
+  audioBrief?: string;
   mode?: string;
   note?: string;
   calorieRange?: string;
