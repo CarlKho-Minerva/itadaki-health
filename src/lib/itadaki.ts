@@ -40,6 +40,7 @@ export type MealAnalysis = {
   clinicianQuestion: string;
   timelineEntry: string;
   uncertainty: string;
+  audioBrief: string;
   careActions: string[];
   trace: Array<{
     label: string;
@@ -240,6 +241,9 @@ export function createMockAnalysis(
     timelineEntry: `${scenario.name}: intentional food log captured after "itadakimasu"; added nutrition estimate, uncertainty, and one optional clinician question.`,
     uncertainty:
       "Portion estimates are approximate. This is coaching context, not medical advice or dosing guidance.",
+    audioBrief: isSandwich
+      ? "Logged 790 calories. Estimate saved."
+      : "Logged 705 calories. Estimate saved.",
     careActions: [
       "Log meal with uncertainty range",
       "Save one clinician question",
@@ -294,6 +298,7 @@ Return strict JSON matching this shape:
   "clinicianQuestion": string,
   "timelineEntry": string,
   "uncertainty": string,
+  "audioBrief": string,
   "careActions": string[]
 }
 
@@ -302,6 +307,7 @@ Rules:
 - Do not shame the meal or tell the user not to eat it; the meal is already here.
 - Do not mention Health Passport in user-facing output.
 - Be specific about uncertainty.
+- Keep audioBrief under 12 words. It should be calm, useful, and non-medical.
 - Make the result useful in a 3-minute hackathon demo.
 
 Meal scenario: ${scenario.name}
@@ -331,6 +337,7 @@ export function normalizeAnalysis(
     clinicianQuestion: raw.clinicianQuestion || fallback.clinicianQuestion,
     timelineEntry: raw.timelineEntry || fallback.timelineEntry,
     uncertainty: raw.uncertainty || fallback.uncertainty,
+    audioBrief: raw.audioBrief || fallback.audioBrief,
     careActions: Array.isArray(raw.careActions) ? raw.careActions : fallback.careActions,
     trace: fallback.trace,
   };

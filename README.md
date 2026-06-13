@@ -23,10 +23,10 @@ Itadaki Health turns a meal gesture into an explicit consent trigger for food lo
 intent gesture -> cropped meal image -> calorie estimate -> log card
 ```
 
-The demo has two surfaces:
+The demo has three surfaces:
 
 - Judge console: Next.js, Framer Motion, xAI STT proxy, image analysis route, and CSV download.
-- Glasses app: static `600x600` HTML/CSS/JS at `/glasses/index.html`, built for Meta Display Web Apps.
+- Glasses app: static `600x600` HTML/CSS/JS at `/glasses/index.html`, built for Meta Display Web Apps. It syncs the latest log over HTTPS and shows only the calorie number.
 - iOS DAT companion: `ios/ItadakiDAT`, a native SwiftUI app scaffold for real glasses photo capture through Meta's Device Access Toolkit.
 
 ## Human Story
@@ -44,10 +44,10 @@ Meta can see the meal. Itadaki asks for intent, logs the moment, and gives one u
 ## Current MVP Pipeline
 
 1. On web, use the browser companion to test the pipeline.
-2. On glasses Web Apps, use `Recent` to sync the latest server log or `Demo` as fallback.
+2. On glasses Web Apps, use `Refresh` to sync the latest server log or `Demo` as fallback.
 3. On iOS DAT, tap `Listen` and say `itadakimasu`; the app records a short foreground audio clip, preferring the Ray-Ban Bluetooth HFP mic when available.
 4. If the phrase is heard, the app starts a short DAT camera session, waits for video frames, captures one photo, then asks for confirmation.
-5. The app center-crops and resizes the meal image before sending it to xAI.
+5. The app food-focus crops and resizes the meal image before sending it to xAI.
 6. The server calls xAI from `/api/analyze-meal`; the glasses display only:
 
 ```text
@@ -56,6 +56,8 @@ Calories
 ```
 
 7. Tap `Log`; `/api/log-meal` creates a CSV row and a JSONL card record.
+8. `/api/speak` returns a short xAI TTS confirmation. If TTS is unavailable, iOS falls back to native speech.
+9. `/api/health-passport` exports the latest logs as markdown for Michelle's Health Passport lane.
 
 ## Put It On Meta Ray-Ban Display
 
@@ -86,6 +88,14 @@ Use:
 - Enter: select.
 - Escape: back to listen screen.
 
+If you deleted the old Meta Web App, re-add the HTTPS production URL:
+
+```text
+https://itadaki-health.vercel.app/glasses/index.html
+```
+
+Do not add `localhost`, an IP address, or an HTTP URL. The glasses Web App is a display/review HUD; the camera capture path is the iOS DAT app.
+
 ## iOS DAT Companion
 
 The native iOS scaffold lives at:
@@ -100,7 +110,7 @@ It uses the public DAT CameraAccess sample as the SDK scaffold, then adds the It
 connect Meta AI -> start DAT camera -> capture photo -> confirm -> Vercel xAI analysis -> meal card
 ```
 
-The Web App path is still useful for the tiny glasses HUD, but the iOS path is the real capture path. The app keeps the DAT stream off until capture, then stops it after logging for battery.
+The Web App path is still useful for the tiny glasses HUD, but the iOS path is the real capture path. The app keeps the DAT stream off until capture, then stops it after logging for battery. After logging, the app plays one short audio confirmation through the active iOS audio route.
 
 The voice trigger is not passive background listening. It is a short foreground recording. If the Ray-Bans are connected to iOS as a Bluetooth hands-free input, the recorder prefers that mic; otherwise it falls back to the iPhone mic.
 
@@ -126,9 +136,9 @@ Cal AI proved photo-based food logging can become a large consumer behavior loop
 - A CSV trail the user can inspect or export.
 - A later FHIR path through Michelle's branch without using PHI during the hackathon.
 
-## xAI Speech Trigger
+## xAI Speech And Audio
 
-`/api/transcribe` is the only place that talks to xAI Speech-to-Text. The browser and glasses app send an audio blob to the server, and the server adds:
+`/api/transcribe` is the only place that talks to xAI Speech-to-Text. The browser demo and iOS companion send an audio blob to the server, and the server adds:
 
 - `format=true`
 - `language=ja` by default
@@ -136,6 +146,17 @@ Cal AI proved photo-based food logging can become a large consumer behavior loop
 - `file` as the last multipart field
 
 The MVP does not assume a system-level "Hey Meta" wake hook inside Web Apps. It uses an app-level `Listen` button and a `Trigger` fallback for the live demo.
+
+`/api/speak` is the only route that talks to xAI Text-to-Speech. The iOS app sends a short `audioBrief` to the server, and the server returns audio bytes. Keep `XAI_API_KEY` server-only.
+
+Recommended hackathon env:
+
+```bash
+XAI_MODEL=grok-4.3
+XAI_REASONING_EFFORT=high
+XAI_TTS_VOICE_ID=eve
+XAI_VOICE_MODEL=grok-voice-think-fast-1.1
+```
 
 ## Evidence Base
 
@@ -147,6 +168,7 @@ The MVP does not assume a system-level "Hey Meta" wake hook inside Web Apps. It 
 - Cal AI acquisition/business case: https://www.businessinsider.com/cal-ai-myfitnesspal-calorie-tracker-teen-founder-flow-zack-yadegari-2026-6
 - Meta Wearables Web App toolkit: https://github.com/facebookincubator/meta-wearables-webapp
 - xAI chat completions: https://docs.x.ai/developers/rest-api-reference/inference/chat
+- xAI TTS: https://docs.x.ai/developers/model-capabilities/audio/text-to-speech
 - Inngest Next.js quick start: https://www.inngest.com/docs/getting-started/nextjs-quick-start
 
 ## Prior Art Disclosure
@@ -246,8 +268,16 @@ Without `XAI_API_KEY`, the app uses deterministic demo analysis. With `XAI_API_K
 - `POST /api/analyze-meal`: image or scenario -> xAI/Grok or fallback -> calorie estimate.
 - `POST /api/log-meal`: JSON meal event -> CSV row.
 - `GET /api/logs`: recent JSONL meal cards for iOS, `/logs`, and glasses sync.
+- `GET /api/health-passport`: markdown export of recent meal logs for the Health Passport lane.
+- `POST /api/speak`: short text -> xAI TTS audio, with iOS native speech fallback client-side.
 
 On Vercel, file writes use serverless `/tmp`, so cross-instance persistence is not guaranteed. The route returns a seeded card when storage is empty so the live demo never blanks. Replace this with Vercel KV, Blob, Firebase, or Supabase before treating `/logs` as durable storage.
+
+## Useful Pages
+
+- `/logs`: iPhone-style cards with expandable meal details.
+- `/pitch`: 3-minute deck.
+- `/architecture`: Mermaid pipeline, audio strategy, and Health Passport/FHIR handoff.
 
 ## Deploy
 
@@ -265,7 +295,7 @@ After deploy, add the public HTTPS `/glasses/index.html` URL to the Meta AI app 
 - `0:45-1:25` Demo: look at meal, gesture/button, DAT photo, crop, xAI analysis, calories card.
 - `1:25-1:55` Awareness: the card turns a meal into a reviewable memory without scolding the user.
 - `1:55-2:20` Business: Cal AI made the habit obvious; Itadaki adds wearability and intent.
-- `2:20-2:50` Architecture: iOS DAT capture, Vercel, Grok, JSONL cards, FHIR-ready next branch.
+- `2:20-2:50` Architecture: iOS DAT capture, Vercel, Grok, JSONL cards, FHIR, TTS, Health Passport markdown.
 - `2:50-3:00` Close: this is awareness at the moment behavior happens.
 
 ## Judge Questions

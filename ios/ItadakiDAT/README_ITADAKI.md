@@ -13,10 +13,11 @@ It exists because Meta Ray-Ban Display Web Apps do not expose camera or micropho
 - Start a short glasses camera stream.
 - Wait for the first video frame before auto-capturing.
 - Capture a still photo with `stream.capturePhoto(format: .jpeg)`.
-- Center-crop and resize the meal photo before analysis.
+- Food-focus crop and resize the meal photo before analysis.
 - Confirm the photo in the iPhone app.
 - Send the photo to `https://itadaki-health.vercel.app/api/analyze-meal`.
 - Log the result to `https://itadaki-health.vercel.app/api/log-meal`.
+- Play one short xAI TTS confirmation through the active iOS audio route, with native iOS speech fallback.
 - Render logged meals as cards inside the iOS app.
 - Sync those logs to the browser `/logs` page and the glasses Web App `Recent` view.
 
@@ -114,7 +115,8 @@ open ios/ItadakiDAT/ItadakiDAT.xcodeproj
 12. Tap `Listen`, say `itadakimasu`, and confirm the input label says Ray-Ban if the glasses are the active Bluetooth mic.
 13. If the phrase is heard, the app starts a short camera session and auto-captures after the first frame. If not, tap `Arm`, then `Capture`.
 14. Confirm `Analyze and log`.
-15. Check the logged card in the iOS app and the browser page at `/logs`.
+15. Listen for the short audio confirmation.
+16. Check the logged card in the iOS app and the browser page at `/logs`.
 
 Current observed device state:
 

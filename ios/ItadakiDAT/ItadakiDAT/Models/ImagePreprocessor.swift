@@ -4,14 +4,17 @@ extension UIImage {
   func itadakiMealCrop(maxSide: CGFloat = 1024) -> UIImage {
     let normalized = normalizedForProcessing()
     let sourceSize = normalized.size
-    let side = min(sourceSize.width, sourceSize.height)
+    let baseSide = min(sourceSize.width, sourceSize.height)
+    let side = baseSide * 0.92
     guard side > 0 else { return normalized }
 
     let scale = min(1, maxSide / side)
     let targetSide = side * scale
+    let centerX = sourceSize.width * 0.5
+    let centerY = sourceSize.height * 0.54
     let cropOrigin = CGPoint(
-      x: (sourceSize.width - side) / 2,
-      y: (sourceSize.height - side) / 2
+      x: min(max(0, centerX - side / 2), sourceSize.width - side),
+      y: min(max(0, centerY - side / 2), sourceSize.height - side)
     )
 
     let renderer = UIGraphicsImageRenderer(size: CGSize(width: targetSide, height: targetSide))

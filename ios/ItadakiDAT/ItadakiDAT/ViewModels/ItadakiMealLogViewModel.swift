@@ -1,3 +1,4 @@
+import AVFoundation
 import Foundation
 import Observation
 import SwiftUI
@@ -12,6 +13,8 @@ final class ItadakiMealLogViewModel {
   var showError = false
 
   private let baseURL = URL(string: "https://itadaki-health.vercel.app")!
+  private let speechSynthesizer = AVSpeechSynthesizer()
+  private var audioPlayer: AVAudioPlayer?
 
   func refreshLogs() async {
     do {
@@ -64,7 +67,7 @@ final class ItadakiMealLogViewModel {
         "thumbnailDataUrl": thumbnailDataURL,
         "uncertainty": analysis.uncertainty ?? "",
         "mode": analysisResponse.mode ?? "xai",
-        "note": "Captured through the iOS DAT companion, center-cropped before analysis.",
+        "note": "Captured through the iOS DAT companion, food-focus cropped before analysis.",
         "items": (analysis.itemEstimate ?? []).map { item in
           [
             "name": item.name,
@@ -97,8 +100,10 @@ final class ItadakiMealLogViewModel {
       if let log = logResponse.log {
         logs.insert(log, at: 0)
         statusText = "Logged \(Int(log.calories)) calories."
+        await speakSummary(analysis.audioBrief ?? "Logged \(Int(log.calories)) calories.")
       } else {
         await refreshLogs()
+        await speakSummary(analysis.audioBrief ?? "Meal logged.")
       }
     } catch {
       showError("Meal analysis failed: \(error.localizedDescription)")
@@ -132,6 +137,35 @@ final class ItadakiMealLogViewModel {
 
   private func endpoint(_ path: String) -> URL {
     URL(string: path, relativeTo: baseURL)!.absoluteURL
+  }
+
+  private func speakSummary(_ text: String) async {
+    let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else { return }
+
+    do {
+      let url = endpoint("/api/speak")
+      var request = URLRequest(url: url)
+      request.httpMethod = "POST"
+      request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+      request.httpBody = try JSONSerialization.data(withJSONObject: [
+        "text": trimmed,
+        "language": "en",
+      ])
+
+      let (data, response) = try await URLSession.shared.data(for: request)
+      try validate(response)
+      try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+      try AVAudioSession.sharedInstance().setActive(true)
+      audioPlayer = try AVAudioPlayer(data: data)
+      audioPlayer?.prepareToPlay()
+      audioPlayer?.play()
+    } catch {
+      let utterance = AVSpeechUtterance(string: trimmed)
+      utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
+      utterance.volume = 0.9
+      speechSynthesizer.speak(utterance)
+    }
   }
 
   private var decoder: JSONDecoder {

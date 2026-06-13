@@ -16,6 +16,7 @@
     var input = document.getElementById("photo-input");
     input.addEventListener("change", onPhoto);
     focusFirst();
+    loadRecent(true);
   }
 
   function onClick(event) {
@@ -88,7 +89,7 @@
     setText("listen-status", "MRBD Web Apps do not expose mic yet. Use iPhone.");
   }
 
-  function loadRecent() {
+  function loadRecent(stayHome) {
     setText("listen-status", "Syncing latest log...");
     fetch("/api/logs?limit=1")
       .then(function (response) {
@@ -97,27 +98,37 @@
       .then(function (payload) {
         var log = payload.logs && payload.logs[0];
         if (!log) {
+          setText("home-calories", "--");
           setText("recent-calories", "--");
           setText("recent-meal", "No synced meal yet.");
-          show("recent");
+          setText("listen-status", "No synced meal yet.");
+          if (!stayHome) show("recent");
           return;
         }
+        setText("home-calories", String(log.calories || "--"));
+        setText("listen-status", log.mealName || "Latest meal");
         setText("recent-calories", String(log.calories || "--"));
         setText("recent-meal", log.mealName || "Latest meal");
-        show("recent");
+        if (!stayHome) show("recent");
       })
       .catch(function () {
+        setText("home-calories", "--");
+        setText("listen-status", "Sync failed. Use iPhone app.");
         setText("recent-calories", "--");
         setText("recent-meal", "Sync failed. Try again.");
-        show("recent");
+        if (!stayHome) show("recent");
       });
   }
 
   function manualTrigger() {
     state.transcript = "Itadakimasu";
     state.triggered = true;
-    setText("image-status", "Trigger caught. Add image.");
-    show("image");
+    state.analysis = {
+      mealName: "Demo meal",
+      nutrition: { calories: { value: 705 } },
+    };
+    renderResult();
+    show("result");
   }
 
   function onPhoto(event) {
@@ -202,7 +213,8 @@
     state.imageData = null;
     state.transcript = "";
     state.triggered = false;
-    setText("listen-status", "Capture with the DAT companion. Then sync the latest log.");
+    setText("listen-status", "Capture with the iPhone DAT companion.");
+    loadRecent(true);
     show("listen");
   }
 

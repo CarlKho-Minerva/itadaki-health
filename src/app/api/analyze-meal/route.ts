@@ -76,6 +76,25 @@ type AnalyzeRequest = {
   sugar?: number; // explicit grams; otherwise estimated from carbs
 };
 
+type ReasoningEffort = "none" | "minimal" | "low" | "medium" | "high" | "xhigh";
+
+function xaiReasoningEffort(): ReasoningEffort | undefined {
+  const raw = process.env.XAI_REASONING_EFFORT;
+  if (!raw) return undefined;
+  const normalized = raw.trim().toLowerCase();
+  if (
+    normalized === "none" ||
+    normalized === "minimal" ||
+    normalized === "low" ||
+    normalized === "medium" ||
+    normalized === "high" ||
+    normalized === "xhigh"
+  ) {
+    return normalized;
+  }
+  return undefined;
+}
+
 async function sendEvent(name: string, data: Record<string, unknown>) {
   try {
     await inngest.send({ name, data });
@@ -163,6 +182,7 @@ export async function POST(request: Request) {
         },
       ],
       temperature: 0.2,
+      reasoning_effort: xaiReasoningEffort(),
       response_format: { type: "json_object" },
     });
 

@@ -102,11 +102,11 @@ export default function ItadakiDemo() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setStatus("Cropping meal image...");
+    setStatus("Food-focus cropping meal image...");
     try {
       const cropped = await cropMealImage(file);
       setImageData(cropped);
-      setStatus("Meal crop ready. Estimate calories.");
+      setStatus("Food-focus crop ready. Estimate calories.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Could not crop image.");
     }
@@ -161,10 +161,16 @@ export default function ItadakiDemo() {
         protein: nextAnalysis.nutrition.protein.value,
         carbs: nextAnalysis.nutrition.carbs.value,
         fat: nextAnalysis.nutrition.fat.value,
+        sodium: nextAnalysis.nutrition.sodium.value,
         imageLabel: imageData ? "uploaded-image" : "sample-image",
         thumbnailDataUrl: imageData || undefined,
         uncertainty: nextAnalysis.uncertainty,
+        calorieRange: nextAnalysis.nutrition.calories.range,
+        proteinRange: nextAnalysis.nutrition.protein.range,
+        carbsRange: nextAnalysis.nutrition.carbs.range,
+        fatRange: nextAnalysis.nutrition.fat.range,
         note: "Browser companion log",
+        items: nextAnalysis.itemEstimate,
       }),
     });
 
@@ -269,7 +275,7 @@ export default function ItadakiDemo() {
             <span>2</span>
             <div>
               <h2>Image</h2>
-              <p>Upload or capture a food image. The app center-crops before analysis.</p>
+              <p>Upload or capture a food image. The app food-focus crops before analysis.</p>
             </div>
           </div>
           <input
@@ -330,6 +336,12 @@ export default function ItadakiDemo() {
         <a className="logs-link secondary" href="/pitch">
           Open Pitch Deck
         </a>
+        <a className="logs-link secondary" href="/architecture">
+          Open Architecture
+        </a>
+        <a className="logs-link secondary" href="/api/health-passport">
+          Export Health Passport Markdown
+        </a>
       </section>
     </main>
   );
@@ -342,9 +354,10 @@ function cropMealImage(file: File) {
 
     image.onload = () => {
       try {
-        const side = Math.min(image.naturalWidth, image.naturalHeight);
-        const sourceX = Math.max(0, (image.naturalWidth - side) / 2);
-        const sourceY = Math.max(0, (image.naturalHeight - side) / 2);
+        const baseSide = Math.min(image.naturalWidth, image.naturalHeight);
+        const side = Math.max(1, baseSide * 0.92);
+        const sourceX = clamp(image.naturalWidth * 0.5 - side / 2, 0, image.naturalWidth - side);
+        const sourceY = clamp(image.naturalHeight * 0.54 - side / 2, 0, image.naturalHeight - side);
         const targetSide = Math.min(1024, side);
         const canvas = document.createElement("canvas");
         canvas.width = targetSide;
@@ -383,4 +396,8 @@ function cropMealImage(file: File) {
 
     image.src = url;
   });
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
 }

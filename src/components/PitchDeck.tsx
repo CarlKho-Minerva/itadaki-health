@@ -31,10 +31,11 @@ const principles = [
 
 const architecture = [
   "iOS DAT companion starts a short glasses camera session",
-  "Meal image is center-cropped and compressed on device",
-  "Vercel route sends photo and synthetic profile to Grok",
-  "Result writes a log card, CSV row, and FHIR-ready event shape",
-  "Michelle's FHIR branch maps logs into portable clinical records",
+  "Meal image is food-focus cropped and compressed on device",
+  "Vercel route sends photo to Grok with JSON-only output",
+  "Result writes a log card, CSV row, FHIR Observation bundle, and Health Passport markdown export",
+  "Michelle's risk lane maps repeated logs into a FHIR CarePlan",
+  "xAI TTS returns one short audio confirmation through the phone/glasses route",
 ];
 
 const demoSteps = [
@@ -79,6 +80,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <nav className="deck-nav" aria-label="Itadaki deck navigation">
         <Link href="/">Demo</Link>
         <Link href="/logs">Logs</Link>
+        <Link href="/architecture">Architecture</Link>
         <a href="/glasses/index.html">Glasses</a>
       </nav>
 

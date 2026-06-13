@@ -10,6 +10,7 @@ struct MealAnalysisPayload: Decodable {
   let itemEstimate: [MealItemEstimatePayload]?
   let nutrition: NutritionPayload
   let uncertainty: String?
+  let audioBrief: String?
 }
 
 struct MealItemEstimatePayload: Codable {

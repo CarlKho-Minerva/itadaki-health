@@ -67,30 +67,50 @@ export default async function LogsPage() {
         <h1 className="recent-heading">Recently logged</h1>
         <section className="meal-card-list">
           {cards.map((log) => (
-            <article className="meal-log-card" key={log.id}>
-              <div className="meal-thumb">
-                {log.thumbnailDataUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={log.thumbnailDataUrl} alt="" />
-                ) : (
-                  <span>{log.imageLabel === "sample" ? "Sample" : "Photo"}</span>
-                )}
-              </div>
-              <div className="meal-log-copy">
-                <div className="meal-log-title">
-                  <strong>{log.mealName}</strong>
-                  <span>{formatTime(log.timestamp)}</span>
+            <details className="meal-log-card" key={log.id}>
+              <summary>
+                <div className="meal-thumb">
+                  {log.thumbnailDataUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={log.thumbnailDataUrl} alt="" />
+                  ) : (
+                    <span>{log.imageLabel === "sample" ? "Sample" : "Photo"}</span>
+                  )}
                 </div>
-                <p>{log.calories} calories</p>
-                <div className="macro-row">
-                  <span>{log.protein ?? 0}g</span>
-                  <span>{log.carbs ?? 0}g</span>
-                  <span>{log.fat ?? 0}g</span>
+                <div className="meal-log-copy">
+                  <div className="meal-log-title">
+                    <strong>{log.mealName}</strong>
+                    <span>{formatTime(log.timestamp)}</span>
+                  </div>
+                  <p>{log.calories} calories</p>
+                  <div className="macro-row">
+                    <span>{log.protein ?? 0}g</span>
+                    <span>{log.carbs ?? 0}g</span>
+                    <span>{log.fat ?? 0}g</span>
+                  </div>
                 </div>
+              </summary>
+              <div className="meal-log-expanded">
+                {log.calorieRange ? <p>Calories range: {log.calorieRange}</p> : null}
+                {log.sodium ? <p>Sodium estimate: {log.sodium}mg</p> : null}
+                {log.uncertainty ? <p>{log.uncertainty}</p> : null}
+                {log.items?.length ? (
+                  <ul>
+                    {log.items.map((item) => (
+                      <li key={`${item.name}-${item.amount}`}>
+                        {item.name} - {item.amount}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </div>
-            </article>
+            </details>
           ))}
         </section>
+
+        <a className="logs-export-link" href="/api/health-passport">
+          Export markdown
+        </a>
       </section>
     </main>
   );
