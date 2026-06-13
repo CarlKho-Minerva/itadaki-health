@@ -45,16 +45,17 @@ Meta can see the meal. Health Passport knows the context. Itadaki asks for inten
 
 1. On web, use the browser companion to test the pipeline.
 2. On glasses Web Apps, use `Recent` to sync the latest server log or `Demo` as fallback.
-3. On iOS DAT, connect glasses, start a short camera session, capture, confirm, analyze, and log.
-4. The app center-crops and resizes the meal image before sending it to xAI.
-5. The server calls xAI from `/api/analyze-meal`; the glasses display only:
+3. On iOS DAT, tap `Listen` and say `itadakimasu`; the app records a short foreground audio clip, preferring the Ray-Ban Bluetooth HFP mic when available.
+4. If the phrase is heard, the app starts a short DAT camera session, waits for video frames, captures one photo, then asks for confirmation.
+5. The app center-crops and resizes the meal image before sending it to xAI.
+6. The server calls xAI from `/api/analyze-meal`; the glasses display only:
 
 ```text
 Calories
 705
 ```
 
-6. Tap `Log`; `/api/log-meal` creates a CSV row and a JSONL card record.
+7. Tap `Log`; `/api/log-meal` creates a CSV row and a JSONL card record.
 
 ## Put It On Meta Ray-Ban Display
 
@@ -99,7 +100,11 @@ It uses the public DAT CameraAccess sample as the SDK scaffold, then adds the It
 connect Meta AI -> start DAT camera -> capture photo -> confirm -> Vercel xAI analysis -> meal card
 ```
 
-The current Web App docs say MRBD Web Apps do not support camera or microphone, so this iOS path is the real capture path. The app keeps the stream off until capture, then stops it after logging for battery.
+The Web App path is still useful for the tiny glasses HUD, but the iOS path is the real capture path. The app keeps the DAT stream off until capture, then stops it after logging for battery.
+
+The voice trigger is not passive background listening. It is a short foreground recording. If the Ray-Bans are connected to iOS as a Bluetooth hands-free input, the recorder prefers that mic; otherwise it falls back to the iPhone mic.
+
+Physical iPhone status: the connected iPhone is paired and visible to CoreDevice. Installing the app is blocked until Xcode has an Apple account/provisioning profile for `com.carlkho.itadaki.dat`. The simulator and generic iPhone builds pass.
 
 ### Low-Power Gesture Strategy
 

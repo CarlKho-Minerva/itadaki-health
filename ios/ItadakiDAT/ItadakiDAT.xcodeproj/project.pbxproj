@@ -41,6 +41,7 @@
 		FEEE01022F96000100000001 /* ItadakiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01032F96000100000001 /* ItadakiModels.swift */; };
 		FEEE01042F96000100000001 /* ImagePreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01052F96000100000001 /* ImagePreprocessor.swift */; };
 		FEEE01062F96000100000001 /* ItadakiCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01072F96000100000001 /* ItadakiCaptureView.swift */; };
+		FEEE02002F97000100000001 /* WakePhraseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE02012F97000100000001 /* WakePhraseViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +110,7 @@
 		FEEE01032F96000100000001 /* ItadakiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItadakiModels.swift; sourceTree = "<group>"; };
 		FEEE01052F96000100000001 /* ImagePreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreprocessor.swift; sourceTree = "<group>"; };
 		FEEE01072F96000100000001 /* ItadakiCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItadakiCaptureView.swift; sourceTree = "<group>"; };
+		FEEE02012F97000100000001 /* WakePhraseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakePhraseViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -174,6 +176,7 @@
 				FEEE00002F95000100000001 /* DeviceSessionManager.swift */,
 				FEEE01012F96000100000001 /* ItadakiMealLogViewModel.swift */,
 				8FD96B6F2E6F0A9800F56AB1 /* StreamSessionViewModel.swift */,
+				FEEE02012F97000100000001 /* WakePhraseViewModel.swift */,
 				8F8F00772E8ACB4500A4BDAF /* WearablesViewModel.swift */,
 			);
 			path = ViewModels;
@@ -428,6 +431,7 @@
 				FEEE01022F96000100000001 /* ItadakiModels.swift in Sources */,
 				FEEE01042F96000100000001 /* ImagePreprocessor.swift in Sources */,
 				FEEE01062F96000100000001 /* ItadakiCaptureView.swift in Sources */,
+				FEEE02002F97000100000001 /* WakePhraseViewModel.swift in Sources */,
 				E6A188482EB918740097D0E1 /* StreamView.swift in Sources */,
 				8FFD5FF52E8422580035E446 /* CircleButton.swift in Sources */,
 				8FFD5FF62E8422580035E446 /* CustomButton.swift in Sources */,

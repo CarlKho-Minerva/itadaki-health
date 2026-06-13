@@ -37,6 +37,8 @@ Most likely fixes:
   iPhone Settings > Privacy & Security > Developer Mode > On, then reboot and reconnect.
 - If signing fails:
   Open ios/ItadakiDAT/ItadakiDAT.xcodeproj and confirm the ItadakiDAT target uses team V9WTTPBFK9.
+- If Xcode says "No Accounts" or "No profiles":
+  Open Xcode > Settings > Accounts, add the Apple ID for team V9WTTPBFK9, then let Xcode create the iOS Development profile.
 - If Meta registration opens but fails:
   Replace META_APP_ID = 0 and CLIENT_TOKEN = "" in the ItadakiDAT target Build Settings.
 EOF

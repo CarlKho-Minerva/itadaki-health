@@ -25,7 +25,6 @@ struct DebugMenuView: View {
     HStack {
       Spacer()
       VStack {
-        Spacer()
         Button(action: {
           debugMenuViewModel.showDebugMenu = true
         }) {
@@ -38,7 +37,8 @@ struct DebugMenuView: View {
         }.accessibilityIdentifier("debug_menu_button")
         Spacer()
       }
-      .padding(.trailing)
+      .padding(.top, 72)
+      .padding(.trailing, 18)
     }
   }
 }

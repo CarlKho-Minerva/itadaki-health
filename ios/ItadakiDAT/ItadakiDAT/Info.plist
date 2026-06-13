@@ -75,7 +75,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to stream from your phone's camera as a mock device feed.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app may use the iPhone microphone for an optional itadakimasu trigger prototype.</string>
+	<string>This app uses a foreground microphone recording to detect the itadakimasu trigger, preferring Ray-Ban Bluetooth audio when available.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app may use speech recognition to detect the meal ritual phrase.</string>
 	<key>UIApplicationSceneManifest</key>

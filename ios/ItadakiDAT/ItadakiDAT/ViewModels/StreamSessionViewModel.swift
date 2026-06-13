@@ -110,6 +110,24 @@ final class StreamSessionViewModel {
     }
   }
 
+  func captureWhenReady(timeoutSeconds: Double = 8) async {
+    guard stream != nil else {
+      showPhotoCaptureError = true
+      return
+    }
+
+    let deadline = Date().addingTimeInterval(timeoutSeconds)
+    while Date() < deadline {
+      if streamingStatus == .streaming && hasReceivedFirstFrame {
+        capturePhoto()
+        return
+      }
+      try? await Task.sleep(nanoseconds: 250_000_000)
+    }
+
+    showError("Ray-Ban camera was not ready yet. Tap the camera button once frames appear.")
+  }
+
   func dismissError() {
     showError = false
     errorMessage = ""
@@ -151,7 +169,17 @@ final class StreamSessionViewModel {
       frameRate: 24
     )
 
-    guard let newStream = try? deviceSession.addStream(config: config) else { return }
+    let newStream: MWDATCamera.Stream
+    do {
+      guard let addedStream = try deviceSession.addStream(config: config) else {
+        showError("Could not start Ray-Ban camera stream.")
+        return
+      }
+      newStream = addedStream
+    } catch {
+      showError("Could not start Ray-Ban camera stream: \(error.localizedDescription)")
+      return
+    }
     stream = newStream
     streamingStatus = .waiting
     setupListeners(for: newStream)

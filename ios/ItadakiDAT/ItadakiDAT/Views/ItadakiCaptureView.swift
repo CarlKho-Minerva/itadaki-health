@@ -7,6 +7,7 @@ struct ItadakiCaptureView: View {
 
   @State private var streamViewModel: StreamSessionViewModel
   @State private var mealLogViewModel = ItadakiMealLogViewModel()
+  @State private var wakePhraseViewModel = WakePhraseViewModel()
   @State private var pendingPhoto: UIImage?
   @State private var showConfirmPhoto = false
 
@@ -22,6 +23,7 @@ struct ItadakiCaptureView: View {
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
             header
+            triggerPanel
             capturePanel
             summaryRow
             awarenessCard
@@ -63,7 +65,10 @@ struct ItadakiCaptureView: View {
             },
             onAnalyze: {
               Task {
-                await mealLogViewModel.analyzeAndLog(photo: pendingPhoto)
+                await mealLogViewModel.analyzeAndLog(
+                  photo: pendingPhoto,
+                  transcript: wakePhraseViewModel.bestTranscript
+                )
                 streamViewModel.dismissPhotoPreview()
                 self.pendingPhoto = nil
                 showConfirmPhoto = false
@@ -85,6 +90,11 @@ struct ItadakiCaptureView: View {
       } message: {
         Text(streamViewModel.errorMessage)
       }
+      .alert("Voice trigger issue", isPresented: $wakePhraseViewModel.showError) {
+        Button("OK") {}
+      } message: {
+        Text(wakePhraseViewModel.errorMessage)
+      }
       .alert("Photo capture failed", isPresented: $streamViewModel.showPhotoCaptureError) {
         Button("OK") {
           streamViewModel.dismissPhotoCaptureError()
@@ -96,6 +106,77 @@ struct ItadakiCaptureView: View {
     .onDisappear {
       streamViewModel.endSession()
     }
+  }
+
+  private var triggerPanel: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      HStack(alignment: .center, spacing: 14) {
+        ZStack {
+          Circle()
+            .fill(Color.black)
+            .frame(width: 54, height: 54)
+          Image(systemName: wakePhraseViewModel.isRecording ? "waveform" : "mic.fill")
+            .font(.system(size: 24, weight: .bold))
+            .foregroundStyle(.white)
+        }
+
+        VStack(alignment: .leading, spacing: 4) {
+          Text("Intent trigger")
+            .font(.system(size: 22, weight: .heavy))
+          Text(wakePhraseViewModel.statusText)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(.secondary)
+            .lineLimit(2)
+          Text(wakePhraseViewModel.inputLabel)
+            .font(.system(size: 12, weight: .bold))
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        }
+
+        Spacer()
+      }
+
+      Text("Say itadakimasu, then capture one meal frame. If the Ray-Bans are connected as a Bluetooth headset, the recorder prefers that mic; otherwise it uses the iPhone mic.")
+        .font(.system(size: 14, weight: .medium))
+        .foregroundStyle(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
+
+      HStack(spacing: 10) {
+        Button {
+          Task {
+            await handleVoiceTrigger()
+          }
+        } label: {
+          Label(
+            wakePhraseViewModel.isRecording ? "Listening..." : "Listen",
+            systemImage: wakePhraseViewModel.isRecording ? "waveform" : "mic"
+          )
+          .font(.system(size: 16, weight: .heavy))
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 14)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(Color.black)
+        .disabled(wakePhraseViewModel.isRecording || wakePhraseViewModel.isTranscribing || mealLogViewModel.isAnalyzing)
+
+        Button {
+          Task {
+            await armOrCaptureCamera()
+          }
+        } label: {
+          Label(streamViewModel.isStreaming ? "Capture" : "Arm", systemImage: streamViewModel.isStreaming ? "camera" : "eyeglasses")
+            .font(.system(size: 16, weight: .heavy))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+        }
+        .buttonStyle(.bordered)
+        .disabled(mealLogViewModel.isAnalyzing)
+      }
+    }
+    .padding(18)
+    .background(Color.white)
+    .clipShape(RoundedRectangle(cornerRadius: 24))
+    .shadow(color: .black.opacity(0.06), radius: 18, y: 8)
   }
 
   private var header: some View {
@@ -143,7 +224,7 @@ struct ItadakiCaptureView: View {
               .font(.system(size: 42, weight: .bold))
             Text(streamViewModel.isStreaming ? "Waiting for frames" : "Start DAT camera")
               .font(.system(size: 22, weight: .bold))
-            Text("Gesture, capture, crop, analyze, then stop the stream.")
+            Text("Ray-Ban video stream, photo capture, crop, analyze, then stop.")
               .font(.system(size: 15, weight: .medium))
               .foregroundStyle(.white.opacity(0.7))
           }
@@ -245,11 +326,7 @@ struct ItadakiCaptureView: View {
   private var captureButton: some View {
     Button {
       Task {
-        if streamViewModel.isStreaming {
-          streamViewModel.capturePhoto()
-        } else {
-          await streamViewModel.handleStartStreaming()
-        }
+        await armOrCaptureCamera()
       }
     } label: {
       Image(systemName: streamViewModel.isStreaming ? "camera.fill" : "plus")
@@ -261,6 +338,28 @@ struct ItadakiCaptureView: View {
         .shadow(color: .black.opacity(0.2), radius: 22, y: 12)
     }
     .disabled(mealLogViewModel.isAnalyzing)
+  }
+
+  private func handleVoiceTrigger() async {
+    let didHearTrigger = await wakePhraseViewModel.recordAndTranscribe()
+    guard didHearTrigger else { return }
+    await armOrCaptureCamera(autoCapture: true)
+  }
+
+  private func armOrCaptureCamera(autoCapture: Bool = false) async {
+    if streamViewModel.isStreaming {
+      if autoCapture {
+        await streamViewModel.captureWhenReady()
+      } else {
+        streamViewModel.capturePhoto()
+      }
+      return
+    }
+
+    await streamViewModel.handleStartStreaming()
+    if autoCapture {
+      await streamViewModel.captureWhenReady()
+    }
   }
 }
 

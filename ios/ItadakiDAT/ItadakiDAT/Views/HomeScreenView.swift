@@ -40,7 +40,7 @@ struct HomeScreenView: View {
           HomeTipItemView(
             resource: .soundIcon,
             title: "Intent First",
-            text: "Use the app button today. Add speech or gesture triggers after the camera path is stable."
+            text: "Tap Listen and say itadakimasu. The app prefers Ray-Ban Bluetooth audio, then falls back to the iPhone mic."
           )
           HomeTipItemView(
             resource: .walkingIcon,
