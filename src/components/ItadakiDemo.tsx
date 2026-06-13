@@ -328,6 +328,9 @@ export default function ItadakiDemo() {
         <a className="logs-link" href="/logs">
           Open Recently Logged
         </a>
+        <a className="logs-link secondary" href="/pitch">
+          Open Pitch Deck
+        </a>
       </section>
     </main>
   );
