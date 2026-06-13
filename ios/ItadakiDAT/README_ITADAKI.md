@@ -10,6 +10,7 @@ It exists because Meta Ray-Ban Display Web Apps do not expose camera or micropho
 - Request camera permission through DAT.
 - Start a short glasses camera stream.
 - Capture a still photo with `stream.capturePhoto(format: .jpeg)`.
+- Center-crop and resize the meal photo before analysis.
 - Confirm the photo in the iPhone app.
 - Send the photo to `https://itadaki-health.vercel.app/api/analyze-meal`.
 - Log the result to `https://itadaki-health.vercel.app/api/log-meal`.
@@ -27,6 +28,14 @@ The app does not run a continuous camera stream. The intended MVP behavior is:
 5. Stop the stream.
 
 This is the practical hackathon path. Passive ambient listening and always-on camera are intentionally not implemented here because the current docs and DAT plugin materials do not show a glasses microphone API, and iOS background audio/wake-word behavior is not a safe same-day dependency.
+
+The demo gesture should be framed as a low-power intent action:
+
+```text
+hands/meal gesture or double tap -> foreground DAT capture -> stop stream after one photo
+```
+
+If DAT exposes captouch or EMG events on the target device, wire that event to the same capture action. If not, keep the foreground button and narrate the intended gesture interaction during the screen recording.
 
 ## Setup On iPhone
 
@@ -54,6 +63,7 @@ open ios/ItadakiDAT/ItadakiDAT.xcodeproj
 - `MWDATCamera`: low-resolution camera stream and JPEG photo capture.
 - `MWDATMockDevice`: simulator/dev testing without real hardware.
 - `MWDATDisplay`: later path for native display cards, if needed.
+- Michelle (`hhizzuk`) owns the future FHIR branch. Do not mix real PHI into this demo branch.
 
 ## Next Step After The Hackathon
 

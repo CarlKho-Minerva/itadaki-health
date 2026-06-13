@@ -37,6 +37,10 @@
 		E6DA451F2E79A63100E3F688 /* MockDeviceKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA451A2E79A63100E3F688 /* MockDeviceKitView.swift */; };
 		E6FD3BCE2EB4D53A00E7FE5D /* NonStreamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6FD3BCD2EB4D53A00E7FE5D /* NonStreamView.swift */; };
 		FEEE00012F95000100000001 /* DeviceSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE00002F95000100000001 /* DeviceSessionManager.swift */; };
+		FEEE01002F96000100000001 /* ItadakiMealLogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01012F96000100000001 /* ItadakiMealLogViewModel.swift */; };
+		FEEE01022F96000100000001 /* ItadakiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01032F96000100000001 /* ItadakiModels.swift */; };
+		FEEE01042F96000100000001 /* ImagePreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01052F96000100000001 /* ImagePreprocessor.swift */; };
+		FEEE01062F96000100000001 /* ItadakiCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEEE01072F96000100000001 /* ItadakiCaptureView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +105,10 @@
 		E6DA451A2E79A63100E3F688 /* MockDeviceKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceKitView.swift; sourceTree = "<group>"; };
 		E6FD3BCD2EB4D53A00E7FE5D /* NonStreamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonStreamView.swift; sourceTree = "<group>"; };
 		FEEE00002F95000100000001 /* DeviceSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSessionManager.swift; sourceTree = "<group>"; };
+		FEEE01012F96000100000001 /* ItadakiMealLogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItadakiMealLogViewModel.swift; sourceTree = "<group>"; };
+		FEEE01032F96000100000001 /* ItadakiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItadakiModels.swift; sourceTree = "<group>"; };
+		FEEE01052F96000100000001 /* ImagePreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreprocessor.swift; sourceTree = "<group>"; };
+		FEEE01072F96000100000001 /* ItadakiCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItadakiCaptureView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -164,6 +172,7 @@
 				8FFD602B2E8433E20035E446 /* MockDeviceKit */,
 				8F2D237F2E856711002D0588 /* DebugMenuViewModel.swift */,
 				FEEE00002F95000100000001 /* DeviceSessionManager.swift */,
+				FEEE01012F96000100000001 /* ItadakiMealLogViewModel.swift */,
 				8FD96B6F2E6F0A9800F56AB1 /* StreamSessionViewModel.swift */,
 				8F8F00772E8ACB4500A4BDAF /* WearablesViewModel.swift */,
 			);
@@ -177,6 +186,7 @@
 				E6DA451B2E79A63100E3F688 /* MockDeviceKit */,
 				8FFD605E2E84A2F70035E446 /* DebugMenuView.swift */,
 				8FD96B722E6F0A9800F56AB1 /* HomeScreenView.swift */,
+				FEEE01072F96000100000001 /* ItadakiCaptureView.swift */,
 				8FFD605F2E84A2F70035E446 /* MainAppView.swift */,
 				8FD96B742E6F0A9800F56AB1 /* PhotoPreviewView.swift */,
 				8FFD60532E849D0D0035E446 /* RegistrationView.swift */,
@@ -191,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				E66CC01A2F3E1A9300B07379 /* TestResources */,
+				FEEE01082F96000100000001 /* Models */,
 				8FD96B702E6F0A9800F56AB1 /* ViewModels */,
 				8FD96B762E6F0A9800F56AB1 /* Views */,
 				8FD96B772E6F0A9800F56AB1 /* Assets.xcassets */,
@@ -211,6 +222,15 @@
 				E6DA45172E79A63100E3F688 /* CardView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		FEEE01082F96000100000001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FEEE01052F96000100000001 /* ImagePreprocessor.swift */,
+				FEEE01032F96000100000001 /* ItadakiModels.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		8FFD602B2E8433E20035E446 /* MockDeviceKit */ = {
@@ -404,6 +424,10 @@
 				8FD96B8A2E6F0A9800F56AB1 /* PhotoPreviewView.swift in Sources */,
 				E66D30242E7DA71900470B48 /* MockDeviceKitButton.swift in Sources */,
 				8F8F00782E8ACB4600A4BDAF /* WearablesViewModel.swift in Sources */,
+				FEEE01002F96000100000001 /* ItadakiMealLogViewModel.swift in Sources */,
+				FEEE01022F96000100000001 /* ItadakiModels.swift in Sources */,
+				FEEE01042F96000100000001 /* ImagePreprocessor.swift in Sources */,
+				FEEE01062F96000100000001 /* ItadakiCaptureView.swift in Sources */,
 				E6A188482EB918740097D0E1 /* StreamView.swift in Sources */,
 				8FFD5FF52E8422580035E446 /* CircleButton.swift in Sources */,
 				8FFD5FF62E8422580035E446 /* CustomButton.swift in Sources */,

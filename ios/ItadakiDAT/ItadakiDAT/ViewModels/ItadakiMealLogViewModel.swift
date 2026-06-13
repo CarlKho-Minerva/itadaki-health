@@ -24,7 +24,8 @@ final class ItadakiMealLogViewModel {
   }
 
   func analyzeAndLog(photo: UIImage, transcript: String = "Itadakimasu") async {
-    guard let imageData = photo.jpegData(compressionQuality: 0.72) else {
+    let preparedPhoto = photo.itadakiMealCrop()
+    guard let imageData = preparedPhoto.jpegData(compressionQuality: 0.72) else {
       showError("Could not encode photo.")
       return
     }
@@ -61,7 +62,7 @@ final class ItadakiMealLogViewModel {
           "thumbnailDataUrl": dataURL,
           "uncertainty": analysis.uncertainty ?? "",
           "mode": analysisResponse.mode ?? "xai",
-          "note": "Captured through the iOS DAT companion.",
+          "note": "Captured through the iOS DAT companion, center-cropped before analysis.",
         ]
       )
 

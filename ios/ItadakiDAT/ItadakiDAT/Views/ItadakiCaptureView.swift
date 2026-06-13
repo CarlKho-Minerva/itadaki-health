@@ -24,6 +24,7 @@ struct ItadakiCaptureView: View {
             header
             capturePanel
             summaryRow
+            awarenessCard
             recentlyLogged
           }
           .padding(24)
@@ -142,7 +143,7 @@ struct ItadakiCaptureView: View {
               .font(.system(size: 42, weight: .bold))
             Text(streamViewModel.isStreaming ? "Waiting for frames" : "Start DAT camera")
               .font(.system(size: 22, weight: .bold))
-            Text("Stream stays off until capture to protect battery.")
+            Text("Gesture, capture, crop, analyze, then stop the stream.")
               .font(.system(size: 15, weight: .medium))
               .foregroundStyle(.white.opacity(0.7))
           }
@@ -200,6 +201,24 @@ struct ItadakiCaptureView: View {
         caption: "Synced"
       )
     }
+  }
+
+  private var awarenessCard: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Health Passport context")
+        .font(.system(size: 15, weight: .heavy))
+        .foregroundStyle(.secondary)
+      Text("This is not food policing.")
+        .font(.system(size: 24, weight: .heavy))
+      Text("The meal is already here. Itadaki turns it into health memory: calories now, lab context and FHIR records next.")
+        .font(.system(size: 16, weight: .medium))
+        .foregroundStyle(.secondary)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(20)
+    .background(Color.white)
+    .clipShape(RoundedRectangle(cornerRadius: 24))
+    .shadow(color: .black.opacity(0.06), radius: 18, y: 8)
   }
 
   private var recentlyLogged: some View {

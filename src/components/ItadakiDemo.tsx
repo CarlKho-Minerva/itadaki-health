@@ -98,16 +98,18 @@ export default function ItadakiDemo() {
     setStatus("Manual trigger set. Add the food image.");
   }
 
-  function onFileChange(event: ChangeEvent<HTMLInputElement>) {
+  async function onFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageData(String(reader.result));
-      setStatus("Image ready. Estimate calories.");
-    };
-    reader.readAsDataURL(file);
+    setStatus("Cropping meal image...");
+    try {
+      const cropped = await cropMealImage(file);
+      setImageData(cropped);
+      setStatus("Meal crop ready. Estimate calories.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Could not crop image.");
+    }
   }
 
   function useSampleImage() {
@@ -196,8 +198,8 @@ export default function ItadakiDemo() {
           </div>
           <h1>Say itadakimasu. See the calories.</h1>
           <p>
-            A tiny Meta Ray-Ban Display MVP: voice trigger, food image, calorie estimate,
-            CSV log.
+            A tiny Meta Ray-Ban Display MVP: intent gesture, meal photo, calorie estimate,
+            Health Passport memory.
           </p>
         </motion.div>
 
@@ -227,13 +229,26 @@ export default function ItadakiDemo() {
         </motion.div>
       </section>
 
+      <section className="story-band">
+        <div>
+          <span>Why this exists</span>
+          <h2>Most health advice arrives after the meal. Itadaki captures the moment before it disappears.</h2>
+        </div>
+        <p>
+          For Filipino families, blood pressure, fatty liver, LDL, and kidney worries often live as
+          vague dinner-table anxiety. Health Passport makes the record portable; Itadaki makes the
+          meal part of that record. The app does not scold. It logs the choice, adds context, and
+          gives one useful question for later.
+        </p>
+      </section>
+
       <section className="mvp-grid">
         <div className="mvp-card steps-card">
           <div className="step-row">
             <span>1</span>
             <div>
               <h2>Trigger</h2>
-              <p>Record a short phrase. xAI STT stays behind the server.</p>
+              <p>For the live demo: double tap or button means intent to log the meal.</p>
             </div>
           </div>
           <div className="button-row">
@@ -255,7 +270,7 @@ export default function ItadakiDemo() {
             <span>2</span>
             <div>
               <h2>Image</h2>
-              <p>Upload or capture a food image. If the glasses cannot open camera, use sample.</p>
+              <p>Upload or capture a food image. The app center-crops before analysis.</p>
             </div>
           </div>
           <input
@@ -316,4 +331,54 @@ export default function ItadakiDemo() {
       </section>
     </main>
   );
+}
+
+function cropMealImage(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      try {
+        const side = Math.min(image.naturalWidth, image.naturalHeight);
+        const sourceX = Math.max(0, (image.naturalWidth - side) / 2);
+        const sourceY = Math.max(0, (image.naturalHeight - side) / 2);
+        const targetSide = Math.min(1024, side);
+        const canvas = document.createElement("canvas");
+        canvas.width = targetSide;
+        canvas.height = targetSide;
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+          reject(new Error("Canvas unavailable."));
+          return;
+        }
+
+        context.drawImage(
+          image,
+          sourceX,
+          sourceY,
+          side,
+          side,
+          0,
+          0,
+          targetSide,
+          targetSide,
+        );
+
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      } catch (error) {
+        reject(error);
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not read image."));
+    };
+
+    image.src = url;
+  });
 }

@@ -13,14 +13,14 @@ Live:
 ## Team
 
 - Carl Vincent Kho
-- Michelle [last name/email/GitHub TBD]
+- Michelle (`hhizzuk`) — FHIR / Fast Healthcare Interoperability Resources lane
 
 ## What It Does
 
-Itadaki Health turns the meal ritual "itadakimasu" into an explicit consent trigger for food logging on Meta Ray-Ban Display. The MVP flow is intentionally small:
+Itadaki Health turns a meal gesture into an explicit consent trigger for food logging on Meta Ray-Ban Display. The MVP flow is intentionally small:
 
 ```text
-say itadakimasu -> add food image -> estimate calories -> log CSV row
+intent gesture -> cropped meal image -> calorie estimate -> Health Passport memory
 ```
 
 The demo has two surfaces:
@@ -29,19 +29,32 @@ The demo has two surfaces:
 - Glasses app: static `600x600` HTML/CSS/JS at `/glasses/index.html`, built for Meta Display Web Apps.
 - iOS DAT companion: `ios/ItadakiDAT`, a native SwiftUI app scaffold for real glasses photo capture through Meta's Device Access Toolkit.
 
+## Human Story
+
+This is not a "you should not eat that" app. Most people have already bought the meal by the time a camera sees it.
+
+The better job is awareness. In Carl's family and Filipino community context, blood pressure, fatty liver, LDL, diabetes risk, and kidney worries often sit in the background as vague anxiety. Health Passport makes the record portable. Itadaki makes the meal part of that record, so the next check-in can connect what someone eats with the labs and notes they already carry.
+
+The demo line:
+
+```text
+Meta can see the meal. Health Passport knows the context. Itadaki asks for intent, logs the moment, and gives one useful awareness card.
+```
+
 ## Current MVP Pipeline
 
 1. On web, use the browser companion to test the pipeline.
 2. On glasses Web Apps, use `Recent` to sync the latest server log or `Demo` as fallback.
 3. On iOS DAT, connect glasses, start a short camera session, capture, confirm, analyze, and log.
-4. The server calls xAI from `/api/analyze-meal`; the glasses display only:
+4. The app center-crops and resizes the meal image before sending it to xAI.
+5. The server calls xAI from `/api/analyze-meal`; the glasses display only:
 
 ```text
 Calories
 705
 ```
 
-5. Tap `Log`; `/api/log-meal` creates a CSV row and a JSONL card record.
+6. Tap `Log`; `/api/log-meal` creates a CSV row and a JSONL card record.
 
 ## Put It On Meta Ray-Ban Display
 
@@ -88,6 +101,16 @@ connect Meta AI -> start DAT camera -> capture photo -> confirm -> Vercel xAI an
 
 The current Web App docs say MRBD Web Apps do not support camera or microphone, so this iOS path is the real capture path. The app keeps the stream off until capture, then stops it after logging for battery.
 
+### Low-Power Gesture Strategy
+
+For the hackathon demo, the low-power manual trigger is:
+
+```text
+meal intent gesture / double tap -> foreground iOS DAT capture -> immediate stream stop after photo
+```
+
+Do not pitch continuous camera or passive always-on audio as built today. The next implementation target is a DAT-supported tap/captouch/EMG gesture if available on the device. If that hook is unavailable in the current SDK, keep the iPhone foreground capture button and narrate the gesture as the product interaction.
+
 ## Why This Is Not A Cal AI Clone
 
 Cal AI proved photo-based food logging can become a large consumer behavior loop. Itadaki Health borrows that familiar behavior, then adds:
@@ -96,7 +119,7 @@ Cal AI proved photo-based food logging can become a large consumer behavior loop
 - A wearable glanceable UI.
 - A tiny calorie-only result for Meta Ray-Ban Display.
 - A CSV trail the user can inspect or export.
-- A later path into Health Passport context without using PHI during the hackathon.
+- A later FHIR path through Michelle's branch without using PHI during the hackathon.
 
 ## xAI Speech Trigger
 
@@ -166,12 +189,12 @@ After deploy, add the public HTTPS `/glasses/index.html` URL to the Meta AI app 
 ## 3-Minute Pitch
 
 - `0:00-0:20` Cal AI proved people will pay to photograph food. Passive glasses need an intent layer.
-- `0:20-0:45` Itadakimasu is the consent moment.
-- `0:45-1:25` Demo the trigger, glasses HUD, meal image, calories number, and CSV row.
-- `1:25-1:55` Cite self-monitoring, image-based dietary assessment, and mindful eating research.
-- `1:55-2:20` Show the Cal AI business case and the wearable intent wedge.
-- `2:20-2:50` Show Vercel, Grok, xAI STT, Meta Web App, and CSV logging.
-- `2:50-3:00` Close: this is patient agency at the moment behavior happens.
+- `0:20-0:45` The consent moment is a meal gesture, not passive surveillance.
+- `0:45-1:25` Demo: look at meal, gesture/button, DAT photo, crop, xAI analysis, calories card.
+- `1:25-1:55` Health Passport context: the card turns a meal into a memory connected to labs and risks.
+- `1:55-2:20` Business: Cal AI made the habit obvious; Itadaki adds wearability and medical context.
+- `2:20-2:50` Architecture: iOS DAT capture, Vercel, Grok, JSONL cards, FHIR-ready next branch.
+- `2:50-3:00` Close: this is awareness at the moment behavior happens.
 
 ## Judge Questions
 
