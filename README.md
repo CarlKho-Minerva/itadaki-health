@@ -4,6 +4,12 @@ Wearable food logging that starts with consent, then turns meals into Health Pas
 
 Built during the Autonomous Healthcare Hackathon on June 13, 2026.
 
+Live:
+
+- Judge demo: https://itadaki-health.vercel.app/
+- Meta Display Web App: https://itadaki-health.vercel.app/glasses/index.html
+- Public repo: https://github.com/CarlKho-Minerva/itadaki-health
+
 ## Team
 
 - Carl Vincent Kho
