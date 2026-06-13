@@ -48,6 +48,7 @@
 
   function act(action) {
     if (action === "listen") return listen();
+    if (action === "recent") return loadRecent();
     if (action === "trigger") return manualTrigger();
     if (action === "photo") return document.getElementById("photo-input").click();
     if (action === "sample") return analyze();
@@ -84,55 +85,31 @@
   }
 
   function listen() {
-    setText("listen-status", "Listening...");
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(function (stream) {
-        var recorder = new MediaRecorder(stream);
-        var chunks = [];
-
-        recorder.ondataavailable = function (event) {
-          if (event.data.size) chunks.push(event.data);
-        };
-
-        recorder.onstop = function () {
-          stream.getTracks().forEach(function (track) {
-            track.stop();
-          });
-          transcribe(new Blob(chunks, { type: recorder.mimeType || "audio/webm" }));
-        };
-
-        recorder.start();
-        window.setTimeout(function () {
-          recorder.stop();
-        }, 2600);
-      })
-      .catch(function () {
-        setText("listen-status", "Mic unavailable. Tap Trigger.");
-      });
+    setText("listen-status", "MRBD Web Apps do not expose mic yet. Use iPhone.");
   }
 
-  function transcribe(blob) {
-    var form = new FormData();
-    form.append("language", "ja");
-    form.append("file", blob, "itadakimasu.webm");
-
-    fetch("/api/transcribe", { method: "POST", body: form })
+  function loadRecent() {
+    setText("listen-status", "Syncing latest log...");
+    fetch("/api/logs?limit=1")
       .then(function (response) {
         return response.json();
       })
       .then(function (payload) {
-        state.transcript = payload.text || "";
-        state.triggered = Boolean(payload.triggered);
-        if (!state.triggered) {
-          setText("listen-status", "Not caught. Tap Trigger.");
+        var log = payload.logs && payload.logs[0];
+        if (!log) {
+          setText("recent-calories", "--");
+          setText("recent-meal", "No synced meal yet.");
+          show("recent");
           return;
         }
-        setText("image-status", "Trigger caught. Add image.");
-        show("image");
+        setText("recent-calories", String(log.calories || "--"));
+        setText("recent-meal", log.mealName || "Latest meal");
+        show("recent");
       })
       .catch(function () {
-        setText("listen-status", "STT failed. Tap Trigger.");
+        setText("recent-calories", "--");
+        setText("recent-meal", "Sync failed. Try again.");
+        show("recent");
       });
   }
 
@@ -225,7 +202,7 @@
     state.imageData = null;
     state.transcript = "";
     state.triggered = false;
-    setText("listen-status", "Listen for 2.6s, or tap Trigger.");
+    setText("listen-status", "Capture with the DAT companion. Then sync the latest log.");
     show("listen");
   }
 

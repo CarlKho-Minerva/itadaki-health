@@ -12,11 +12,11 @@
     <main class="app" aria-label="Itadaki Health calories MVP">
       <section id="listen" class="screen active">
         <p class="kicker">Itadaki</p>
-        <h1>Say itadakimasu</h1>
-        <p id="listen-status" class="hint">Listen for 2.6s, or tap Trigger.</p>
+        <h1>Open iPhone</h1>
+        <p id="listen-status" class="hint">Capture with the DAT companion. Then sync the latest log.</p>
         <div class="actions">
-          <button class="focusable" data-action="listen">Listen</button>
-          <button class="focusable" data-action="trigger">Trigger</button>
+          <button class="focusable" data-action="recent">Recent</button>
+          <button class="focusable" data-action="trigger">Demo</button>
         </div>
       </section>
 
@@ -52,6 +52,16 @@
         <h1>Logged</h1>
         <p id="saved-row" class="hint">Meal row saved.</p>
         <button class="focusable solo" data-action="restart">Done</button>
+      </section>
+
+      <section id="recent" class="screen hidden">
+        <p class="kicker">Latest log</p>
+        <h1 id="recent-calories">--</h1>
+        <p id="recent-meal" class="hint">No synced meal yet.</p>
+        <div class="actions">
+          <button class="focusable" data-action="recent">Refresh</button>
+          <button class="focusable" data-action="restart">Back</button>
+        </div>
       </section>
     </main>
     <script src="/glasses/app.js"></script>

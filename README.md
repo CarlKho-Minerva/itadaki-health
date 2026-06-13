@@ -27,12 +27,13 @@ The demo has two surfaces:
 
 - Judge console: Next.js, Framer Motion, xAI STT proxy, image analysis route, and CSV download.
 - Glasses app: static `600x600` HTML/CSS/JS at `/glasses/index.html`, built for Meta Display Web Apps.
+- iOS DAT companion: `ios/ItadakiDAT`, a native SwiftUI app scaffold for real glasses photo capture through Meta's Device Access Toolkit.
 
 ## Current MVP Pipeline
 
-1. Tap `Listen` on the glasses app.
-2. Say "itadakimasu" or tap `Trigger` as fallback.
-3. Tap `Photo` to open camera/file input if supported, or `Sample` for the hackathon demo.
+1. On web, use the browser companion to test the pipeline.
+2. On glasses Web Apps, use `Recent` to sync the latest server log or `Demo` as fallback.
+3. On iOS DAT, connect glasses, start a short camera session, capture, confirm, analyze, and log.
 4. The server calls xAI from `/api/analyze-meal`; the glasses display only:
 
 ```text
@@ -40,7 +41,7 @@ Calories
 705
 ```
 
-5. Tap `Log`; `/api/log-meal` creates a CSV row.
+5. Tap `Log`; `/api/log-meal` creates a CSV row and a JSONL card record.
 
 ## Put It On Meta Ray-Ban Display
 
@@ -70,6 +71,22 @@ Use:
 - Arrow left/right: move focus.
 - Enter: select.
 - Escape: back to listen screen.
+
+## iOS DAT Companion
+
+The native iOS scaffold lives at:
+
+```bash
+open ios/ItadakiDAT/ItadakiDAT.xcodeproj
+```
+
+It uses the public DAT CameraAccess sample as the SDK scaffold, then adds the Itadaki ingestion flow:
+
+```text
+connect Meta AI -> start DAT camera -> capture photo -> confirm -> Vercel xAI analysis -> meal card
+```
+
+The current Web App docs say MRBD Web Apps do not support camera or microphone, so this iOS path is the real capture path. The app keeps the stream off until capture, then stops it after logging for battery.
 
 ## Why This Is Not A Cal AI Clone
 
@@ -133,6 +150,9 @@ Without `XAI_API_KEY`, the app uses deterministic demo analysis. With `XAI_API_K
 - `POST /api/transcribe`: multipart audio file -> xAI STT -> `{ text, triggered }`.
 - `POST /api/analyze-meal`: image or scenario -> xAI/Grok or fallback -> calorie estimate.
 - `POST /api/log-meal`: JSON meal event -> CSV row.
+- `GET /api/logs`: recent JSONL meal cards for iOS, `/logs`, and glasses sync.
+
+On Vercel, file writes use serverless `/tmp`, so cross-instance persistence is not guaranteed. The route returns a seeded card when storage is empty so the live demo never blanks. Replace this with Vercel KV, Blob, Firebase, or Supabase before treating `/logs` as durable storage.
 
 ## Deploy
 

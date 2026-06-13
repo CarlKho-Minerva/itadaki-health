@@ -1,0 +1,76 @@
+import Foundation
+
+struct AnalyzeMealResponse: Decodable {
+  let analysis: MealAnalysisPayload
+  let mode: String?
+}
+
+struct MealAnalysisPayload: Decodable {
+  let mealName: String
+  let nutrition: NutritionPayload
+  let uncertainty: String?
+}
+
+struct NutritionPayload: Decodable {
+  let calories: NutritionMetricPayload
+  let protein: NutritionMetricPayload
+  let carbs: NutritionMetricPayload
+  let fat: NutritionMetricPayload
+}
+
+struct NutritionMetricPayload: Decodable {
+  let value: Double
+  let range: String?
+  let unit: String?
+}
+
+struct MealLogCard: Identifiable, Codable {
+  let id: String
+  let timestamp: String
+  let source: String
+  let status: String
+  let triggered: Bool
+  let transcript: String
+  let mealName: String
+  let calories: Double
+  let protein: Double?
+  let carbs: Double?
+  let fat: Double?
+  let imageLabel: String?
+  let thumbnailDataUrl: String?
+  let uncertainty: String?
+  let mode: String?
+  let note: String?
+
+  var timeLabel: String {
+    guard let date = Self.isoFormatter.date(from: timestamp) else {
+      return "--"
+    }
+    return Self.timeFormatter.string(from: date)
+  }
+
+  private static let isoFormatter: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter
+  }()
+
+  private static let timeFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .none
+    formatter.timeStyle = .short
+    return formatter
+  }()
+}
+
+struct LogsResponse: Decodable {
+  let logs: [MealLogCard]
+}
+
+struct LogMealResponse: Decodable {
+  let ok: Bool
+  let log: MealLogCard?
+  let csvRow: String?
+  let path: String?
+  let error: String?
+}

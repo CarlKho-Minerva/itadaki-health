@@ -13,6 +13,9 @@ type TranscribePayload = {
 type LogPayload = {
   ok: boolean;
   csvRow: string;
+  log?: {
+    id: string;
+  };
   path?: string;
   error?: string;
 };
@@ -153,7 +156,13 @@ export default function ItadakiDemo() {
         triggered,
         mealName: nextAnalysis.mealName,
         calories: nextAnalysis.nutrition.calories.value,
+        protein: nextAnalysis.nutrition.protein.value,
+        carbs: nextAnalysis.nutrition.carbs.value,
+        fat: nextAnalysis.nutrition.fat.value,
         imageLabel: imageData ? "uploaded-image" : "sample-image",
+        thumbnailDataUrl: imageData || undefined,
+        uncertainty: nextAnalysis.uncertainty,
+        note: "Browser companion log",
       }),
     });
 
@@ -301,6 +310,9 @@ export default function ItadakiDemo() {
           <li>Add: https://itadaki-health.vercel.app/glasses/index.html</li>
           <li>Use D-pad/Neural Band gestures: arrows move, Enter selects, Escape goes back.</li>
         </ol>
+        <a className="logs-link" href="/logs">
+          Open Recently Logged
+        </a>
       </section>
     </main>
   );
