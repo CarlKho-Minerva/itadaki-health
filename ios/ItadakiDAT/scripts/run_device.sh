@@ -37,9 +37,11 @@ Most likely fixes:
 - If Xcode says Developer Mode is disabled:
   iPhone Settings > Privacy & Security > Developer Mode > On, then reboot and reconnect.
 - If signing fails:
-  Open ios/ItadakiDAT/ItadakiDAT.xcodeproj and confirm the ItadakiDAT target uses team 6F3H8KVKNM.
+  Open ios/ItadakiDAT/ItadakiDAT.xcodeproj and confirm the ItadakiDAT target uses your Personal Team.
 - If Xcode says "No Accounts" or "No profiles":
-  Open Xcode > Settings > Accounts, add kho@uni.minerva.edu, then let Xcode create the iOS Development profile for team 6F3H8KVKNM.
+  Open Xcode > Settings > Accounts, add kho@uni.minerva.edu, then let Xcode create the iOS Development profile.
+- If Xcode says Personal Teams do not support Hotspot or Access Wi-Fi Information:
+  Pull the latest branch. The hackathon build removes those restricted sample-app entitlements.
 - If Meta registration opens but fails:
   Replace META_APP_ID = 0 and CLIENT_TOKEN = "" in the ItadakiDAT target Build Settings.
 EOF

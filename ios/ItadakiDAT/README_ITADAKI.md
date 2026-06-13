@@ -68,10 +68,11 @@ The iPhone usually reboots after this change. Reconnect it after reboot.
 ```text
 Xcode -> Settings -> Accounts -> add Apple ID
 ItadakiDAT target -> Signing & Capabilities -> Automatically manage signing
-Team -> 6F3H8KVKNM
+Team -> Carl Vincent Kho (Personal Team)
 ```
 
-This Mac currently has a valid Apple Development certificate, but no installed provisioning profiles. If `run_device.sh` prints `No Accounts` or `No profiles`, fix this step first.
+This hackathon build intentionally removes the sample app's `HotspotConfiguration` and `Access Wi-Fi Information` entitlements because Personal Teams cannot provision those capabilities. If `run_device.sh` prints `No Accounts` or `No profiles`, open Xcode once and let it create the managed profile.
+It also removes the unused keychain access group entitlement so the app signs as a minimal camera/mic companion.
 
 4. From the repo root, run:
 
@@ -87,7 +88,7 @@ open ios/ItadakiDAT/ItadakiDAT.xcodeproj
 
 5. Select the `ItadakiDAT` scheme.
 6. Select the connected iPhone, not a simulator.
-7. Confirm Signing & Capabilities uses team `6F3H8KVKNM`.
+7. Confirm Signing & Capabilities uses `Carl Vincent Kho (Personal Team)`.
 8. In the Meta AI app, confirm the glasses are paired and Developer Mode is enabled.
 9. Run the app from Xcode.
 10. Tap `Connect Meta glasses`.
@@ -104,7 +105,7 @@ iPhone 17 Pro Max (Fully Paid NO INSTALLMENTS)
 iOS 26.5.1
 UDID: 00008150-000275DE0A00C01C
 Paired and available to CoreDevice
-Physical install currently blocked by Xcode signing: no Apple account/provisioning profile visible to xcodebuild
+Personal Team signing requires the minimal entitlements file in this branch
 ```
 
 ### Meta App Credentials
@@ -127,7 +128,9 @@ If registration fails or Meta AI refuses the callback, this is the first thing t
 ### Troubleshooting
 
 - If Xcode says the phone is not trusted, unlock the iPhone and accept the trust prompt.
-- If signing fails, set Signing & Capabilities to automatic signing, choose team `6F3H8KVKNM`, and add `kho@uni.minerva.edu` under Xcode Settings -> Accounts.
+- If signing fails, set Signing & Capabilities to automatic signing, choose `Carl Vincent Kho (Personal Team)`, and add `kho@uni.minerva.edu` under Xcode Settings -> Accounts.
+- If Xcode says Personal Teams do not support Hotspot or Access Wi-Fi Information, pull the latest branch; those restricted sample entitlements were removed for the hackathon build.
+- If the app installs but will not launch, trust the developer profile on the iPhone: `Settings -> General -> VPN & Device Management -> Developer App -> Apple Development: kho@uni.minerva.edu -> Trust`.
 - If Meta AI opens but does not approve the app, verify the Meta App ID, client token, URL scheme, bundle ID, and Developer Mode.
 - If the camera stream does not start, keep the app in the foreground and reconnect the glasses inside Meta AI.
 - If the mic label says iPhone instead of Ray-Ban, confirm the glasses are connected as a Bluetooth headset input in iOS Control Center or Bluetooth settings.
