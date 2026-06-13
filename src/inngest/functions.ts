@@ -48,9 +48,25 @@ export const careContextGenerated = inngest.createFunction(
   },
 );
 
+// Health Risk Intelligence Layer: records the generated FHIR CarePlan so the
+// rule-based risk trend is visible in the Inngest trace alongside the rest of
+// the pipeline. Additive — it does not alter the existing functions above.
+export const carePlanGenerated = inngest.createFunction(
+  {
+    id: "care-plan-generated",
+    name: "Risk CarePlan generated",
+    triggers: [{ event: "care_plan.generated" }],
+  },
+  async ({ event, step }) => {
+    const payload = await step.run("record care plan", async () => event.data);
+    return { ok: true, payload };
+  },
+);
+
 export const functions = [
   triggerStarted,
   mealAnalyzed,
   timelineUpdated,
   careContextGenerated,
+  carePlanGenerated,
 ];

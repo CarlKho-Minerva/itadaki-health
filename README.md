@@ -59,6 +59,73 @@ Cal AI proved photo-based food logging can become a large consumer behavior loop
 
 This repo was created fresh for the June 13 hackathon. Prior Carl projects such as Health Passport, Somach Care Router, and Soma HUD are disclosed as background and narrative context. Source code from those repos is not copied here.
 
+## Health Risk Intelligence Layer
+
+An additive, backend-only layer that turns a short history of meals into a
+rule-based dietary risk signal and a FHIR R4 CarePlan. It sits alongside the
+existing meal analysis and FHIR Observation bundle and does not modify either.
+
+What it does:
+
+- **Meal history store** (`src/lib/meal-history.ts`) — keeps the last 5 meals
+  per user in memory. Each meal has `userId`, `calories`, `protein`, `sugar`,
+  and `timestamp`. In-memory only; it resets when the server restarts.
+- **Rule-based risk engine** (`src/lib/risk-engine.ts`) — looks at the last 3–5
+  meals and flags: high calorie trend, low protein trend, repeated unhealthy
+  pattern (consecutive high-calorie meals), and high sugar trend. Output:
+  `{ risks: string[], score: number }` where `score` is 0–100.
+- **FHIR CarePlan generator** (`src/lib/careplan.ts`) — converts the risk output
+  into a valid, lightweight FHIR R4 `CarePlan` resource (one `activity` per
+  flagged risk, score carried as an extension).
+- **Integration** (`src/lib/risk-intelligence.ts`) — hooks into the existing
+  `meal.analyzed` flow: store meal → run risk engine → generate CarePlan →
+  attach to the Health Passport context (API response + a new
+  `care_plan.generated` Inngest event).
+
+This layer is **rule-based and is NOT a medical diagnosis**. It generates FHIR
+R4 CarePlan outputs as coaching context only, on synthetic data.
+
+### Run / test it locally
+
+```bash
+npm install        # if you haven't already
+npm run dev        # http://localhost:3000
+```
+
+Trigger the real `meal.analyzed` flow (risk + CarePlan attached under
+`riskIntelligence`):
+
+```bash
+curl -s -X POST http://localhost:3000/api/analyze-meal \
+  -H 'content-type: application/json' \
+  -d '{"scenarioId":"mendo-turkey","userId":"demo-user"}' | jq .riskIntelligence
+```
+
+Get just the bare FHIR R4 CarePlan from the same endpoint:
+
+```bash
+curl -s -X POST 'http://localhost:3000/api/analyze-meal?format=careplan' \
+  -H 'content-type: application/json' \
+  -d '{"scenarioId":"mendo-turkey","userId":"demo-user"}' | jq .
+```
+
+Simulate a trend directly with the standalone `/api/risk` test endpoint (a
+single analyze-meal call only stores one meal; a trend needs several):
+
+```bash
+# reset, then seed a high-calorie / low-protein / high-sugar streak
+curl -s -X POST http://localhost:3000/api/risk -H 'content-type: application/json' \
+  -d '{"userId":"demo-user","reset":true}'
+for body in \
+  '{"userId":"demo-user","calories":900,"protein":18,"sugar":70}' \
+  '{"userId":"demo-user","calories":820,"protein":20,"sugar":60}' \
+  '{"userId":"demo-user","calories":880,"protein":15,"sugar":80}'; do
+  curl -s -X POST http://localhost:3000/api/risk -H 'content-type: application/json' -d "$body" >/dev/null
+done
+# read the current risk report + CarePlan
+curl -s 'http://localhost:3000/api/risk?userId=demo-user' | jq '{risk, carePlan}'
+```
+
 ## Safety Note
 
 This project uses synthetic health data. It does not diagnose, prescribe, or provide medical advice. It produces coaching context and clinician questions for a user to discuss with a professional.
