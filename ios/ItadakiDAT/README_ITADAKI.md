@@ -39,23 +39,61 @@ If DAT exposes captouch or EMG events on the target device, wire that event to t
 
 ## Setup On iPhone
 
-1. Open:
+### Fast Simulator Check
+
+Run this from the repo root:
+
+```bash
+ios/ItadakiDAT/scripts/run_simulator.sh
+```
+
+The script builds the app, boots the `iPhone 17 Pro Max` simulator, installs Itadaki, launches it, and saves a screenshot to `/tmp/itadaki-sim.png`.
+
+### Physical iPhone + Ray-Ban Check
+
+1. Connect the iPhone by USB-C.
+2. Open the Xcode project:
 
 ```bash
 open ios/ItadakiDAT/ItadakiDAT.xcodeproj
 ```
 
-2. In Xcode, select the `ItadakiDAT` scheme.
-3. Select your connected iPhone.
-4. In Signing & Capabilities, set your Apple developer team if Xcode asks.
-5. In the Meta AI app, enable Developer Mode for your glasses.
-6. Run the app.
-7. Tap `Connect Meta glasses`.
-8. Approve the app in Meta AI.
-9. Return to Itadaki.
-10. Tap the floating plus button to start camera.
-11. Tap the camera button to capture.
+3. Select the `ItadakiDAT` scheme.
+4. Select the connected iPhone, not a simulator.
+5. Confirm Signing & Capabilities uses team `V9WTTPBFK9`.
+6. In the Meta AI app, confirm the glasses are paired and Developer Mode is enabled.
+7. Run the app from Xcode.
+8. Tap `Connect Meta glasses`.
+9. Approve the app in Meta AI, then return to Itadaki.
+10. Tap the floating plus button to start a short camera session.
+11. Tap the camera button to capture one meal photo.
 12. Confirm `Analyze and log`.
+13. Check the logged card in the iOS app and the browser page at `/logs`.
+
+### Meta App Credentials
+
+The project compiles with placeholder DAT credentials:
+
+```text
+META_APP_ID = 0
+CLIENT_TOKEN = ""
+```
+
+Before the physical glasses registration can complete, replace those values in the `ItadakiDAT` target Build Settings with the Meta developer app values for this bundle ID:
+
+```text
+com.carlkho.itadaki.dat
+```
+
+If registration fails or Meta AI refuses the callback, this is the first thing to check.
+
+### Troubleshooting
+
+- If Xcode says the phone is not trusted, unlock the iPhone and accept the trust prompt.
+- If signing fails, set Signing & Capabilities to automatic signing and choose team `V9WTTPBFK9`.
+- If Meta AI opens but does not approve the app, verify the Meta App ID, client token, URL scheme, bundle ID, and Developer Mode.
+- If the camera stream does not start, keep the app in the foreground and reconnect the glasses inside Meta AI.
+- If Vercel analysis fails during the demo, the API falls back to deterministic mock meal data so the log flow still works.
 
 ## DAT Notes Used
 

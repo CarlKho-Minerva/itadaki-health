@@ -61,12 +61,17 @@ struct ItadakiDATApp: App {
 
   var body: some Scene {
     WindowGroup {
-      // Main app view with access to the shared Wearables SDK instance
-      // The Wearables.shared singleton provides the core DAT API
-      MainAppView(wearables: Wearables.shared, viewModel: wearablesViewModel)
+      ZStack {
+        // Main app view with access to the shared Wearables SDK instance.
+        MainAppView(wearables: wearables, viewModel: wearablesViewModel)
+
+        RegistrationView(viewModel: wearablesViewModel)
+          .frame(width: 0, height: 0)
+          .accessibilityHidden(true)
+      }
         .onOpenURL { url in
           Task {
-            _ = try? await Wearables.shared.handleUrl(url)
+            _ = try? await wearables.handleUrl(url)
           }
         }
         // Show error alerts for view model failures
@@ -85,9 +90,6 @@ struct ItadakiDATApp: App {
         DebugMenuView(debugMenuViewModel: debugMenuViewModel)
       }
         #endif
-
-      // Registration view handles the flow for connecting to the glasses via Meta AI
-      RegistrationView(viewModel: wearablesViewModel)
     }
   }
 }
