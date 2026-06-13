@@ -27,6 +27,7 @@ if ! xcodebuild \
   -destination-timeout 15 \
   -configuration Debug \
   -allowProvisioningUpdates \
+  -allowProvisioningDeviceRegistration \
   build; then
   cat >&2 <<'EOF'
 
@@ -36,9 +37,9 @@ Most likely fixes:
 - If Xcode says Developer Mode is disabled:
   iPhone Settings > Privacy & Security > Developer Mode > On, then reboot and reconnect.
 - If signing fails:
-  Open ios/ItadakiDAT/ItadakiDAT.xcodeproj and confirm the ItadakiDAT target uses team V9WTTPBFK9.
+  Open ios/ItadakiDAT/ItadakiDAT.xcodeproj and confirm the ItadakiDAT target uses team 6F3H8KVKNM.
 - If Xcode says "No Accounts" or "No profiles":
-  Open Xcode > Settings > Accounts, add the Apple ID for team V9WTTPBFK9, then let Xcode create the iOS Development profile.
+  Open Xcode > Settings > Accounts, add kho@uni.minerva.edu, then let Xcode create the iOS Development profile for team 6F3H8KVKNM.
 - If Meta registration opens but fails:
   Replace META_APP_ID = 0 and CLIENT_TOKEN = "" in the ItadakiDAT target Build Settings.
 EOF

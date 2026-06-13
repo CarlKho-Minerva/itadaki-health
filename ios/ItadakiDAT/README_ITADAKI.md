@@ -68,7 +68,7 @@ The iPhone usually reboots after this change. Reconnect it after reboot.
 ```text
 Xcode -> Settings -> Accounts -> add Apple ID
 ItadakiDAT target -> Signing & Capabilities -> Automatically manage signing
-Team -> V9WTTPBFK9
+Team -> 6F3H8KVKNM
 ```
 
 This Mac currently has a valid Apple Development certificate, but no installed provisioning profiles. If `run_device.sh` prints `No Accounts` or `No profiles`, fix this step first.
@@ -87,7 +87,7 @@ open ios/ItadakiDAT/ItadakiDAT.xcodeproj
 
 5. Select the `ItadakiDAT` scheme.
 6. Select the connected iPhone, not a simulator.
-7. Confirm Signing & Capabilities uses team `V9WTTPBFK9`.
+7. Confirm Signing & Capabilities uses team `6F3H8KVKNM`.
 8. In the Meta AI app, confirm the glasses are paired and Developer Mode is enabled.
 9. Run the app from Xcode.
 10. Tap `Connect Meta glasses`.
@@ -127,7 +127,7 @@ If registration fails or Meta AI refuses the callback, this is the first thing t
 ### Troubleshooting
 
 - If Xcode says the phone is not trusted, unlock the iPhone and accept the trust prompt.
-- If signing fails, set Signing & Capabilities to automatic signing, choose team `V9WTTPBFK9`, and add the Apple ID under Xcode Settings -> Accounts.
+- If signing fails, set Signing & Capabilities to automatic signing, choose team `6F3H8KVKNM`, and add `kho@uni.minerva.edu` under Xcode Settings -> Accounts.
 - If Meta AI opens but does not approve the app, verify the Meta App ID, client token, URL scheme, bundle ID, and Developer Mode.
 - If the camera stream does not start, keep the app in the foreground and reconnect the glasses inside Meta AI.
 - If the mic label says iPhone instead of Ray-Ban, confirm the glasses are connected as a Bluetooth headset input in iOS Control Center or Bluetooth settings.
