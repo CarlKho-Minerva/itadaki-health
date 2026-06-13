@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+data/
+ios/ItadakiDAT/ItadakiDAT.xcodeproj/project.xcworkspace/xcuserdata/
+ios/ItadakiDAT/ItadakiDAT.xcodeproj/xcuserdata/
