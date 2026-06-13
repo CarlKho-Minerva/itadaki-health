@@ -1365,6 +1365,70 @@ h2 {
   font-size: 0.82rem;
 }
 
+.architecture-live-log {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+  gap: 34px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 30px;
+  color: white;
+  background: #111016;
+  box-shadow: 0 18px 60px rgba(23, 19, 31, 0.12);
+}
+
+.architecture-live-log h2 {
+  margin-top: 26px;
+  font-family: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-size: 2.35rem;
+  line-height: 0.98;
+}
+
+.architecture-live-log p {
+  margin-top: 18px;
+  color: #d7d4dc;
+  line-height: 1.48;
+}
+
+.architecture-log-list {
+  display: grid;
+  gap: 12px;
+}
+
+.architecture-log-list article {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.architecture-log-list span {
+  color: #a8f0a9;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.architecture-log-list strong {
+  color: white;
+  font-size: 1.18rem;
+}
+
+.architecture-log-list p,
+.architecture-log-list small {
+  margin: 0;
+  color: #d7d4dc;
+  line-height: 1.42;
+}
+
+.architecture-log-list small {
+  color: #a8f0a9;
+  font-weight: 800;
+}
+
 .architecture-diagram pre {
   overflow: auto;
   border-radius: 22px;
@@ -1509,6 +1573,181 @@ h2 {
   white-space: pre-wrap;
 }
 
+.submission-shell {
+  width: min(1220px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 24px 0 72px;
+}
+
+.submission-hero {
+  min-height: 390px;
+  display: grid;
+  align-content: center;
+}
+
+.submission-hero h1 {
+  max-width: 920px;
+  font-family: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-size: clamp(4rem, 8vw, 7rem);
+  line-height: 0.9;
+}
+
+.submission-hero p {
+  max-width: 720px;
+  margin-top: 26px;
+  color: var(--muted);
+  font-size: 1.22rem;
+  line-height: 1.48;
+}
+
+.submission-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.submission-card {
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 60px rgba(23, 19, 31, 0.06);
+}
+
+.submission-card.wide {
+  grid-column: 1 / -1;
+}
+
+.submission-card > span {
+  color: var(--blue);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.submission-card h2 {
+  margin-top: 18px;
+  font-family: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  font-size: 3rem;
+  line-height: 0.98;
+}
+
+.submission-card p,
+.submission-card li,
+.submission-card a,
+.submission-card small {
+  color: var(--muted);
+  line-height: 1.48;
+}
+
+.submission-card p {
+  margin-top: 18px;
+}
+
+.submission-big-copy {
+  color: var(--ink) !important;
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+.submission-card pre {
+  overflow: auto;
+  max-height: 680px;
+  margin-top: 22px;
+  border-radius: 22px;
+  padding: 22px;
+  color: #e9f7ea;
+  background: #111016;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.submission-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.submission-links a {
+  display: grid;
+  gap: 8px;
+  border-radius: 20px;
+  padding: 18px;
+  background: #f3f3f7;
+  text-decoration: none;
+}
+
+.submission-links strong {
+  color: var(--ink);
+}
+
+.submission-links small {
+  overflow-wrap: anywhere;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.78rem;
+}
+
+.submission-card ul,
+.submission-card ol {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+  padding-left: 20px;
+}
+
+.pill-list {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px !important;
+  padding-left: 0 !important;
+  list-style: none;
+}
+
+.pill-list li {
+  border-radius: 999px;
+  padding: 10px 13px;
+  color: var(--ink);
+  background: #f3f3f7;
+  font-weight: 900;
+}
+
+.submission-steps {
+  counter-reset: submission-flow;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-left: 0 !important;
+  list-style: none;
+}
+
+.submission-steps li {
+  position: relative;
+  min-height: 56px;
+  border-radius: 18px;
+  padding: 16px 16px 16px 58px;
+  background: #f7f8f1;
+  font-weight: 800;
+}
+
+.submission-steps li::before {
+  counter-increment: submission-flow;
+  content: counter(submission-flow);
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--ink);
+  font-size: 0.82rem;
+}
+
 @media (max-width: 1040px) {
   .deck-cover,
   .deck-band,
@@ -1648,7 +1887,11 @@ h2 {
   .architecture-grid,
   .architecture-diagram,
   .architecture-import,
-  .script-grid {
+  .architecture-live-log,
+  .script-grid,
+  .submission-grid,
+  .submission-links,
+  .submission-steps {
     grid-template-columns: 1fr;
   }
 

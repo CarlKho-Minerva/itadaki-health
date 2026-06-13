@@ -39,6 +39,11 @@ export async function POST(request: Request) {
       text,
       voice_id: body.voiceId || process.env.XAI_TTS_VOICE_ID || "eve",
       language: body.language || "en",
+      output_format: {
+        codec: "mp3",
+        sample_rate: 24000,
+        bit_rate: 128000,
+      },
     }),
   });
 

@@ -13,6 +13,7 @@ export default function DemoScriptPage() {
         <Link href="/logs">Logs</Link>
         <Link href="/architecture">Architecture</Link>
         <Link href="/pitch">Pitch</Link>
+        <Link href="/submission">Submit</Link>
       </nav>
 
       <section className="script-hero">

@@ -4,6 +4,8 @@
   var state = {
     seenId: localStorage.getItem("itadaki:last-seen-log") || "",
     audioUnlocked: false,
+    audioPrimed: false,
+    audioContext: null,
     currentAudio: null,
     pollTimer: null,
     hideTimer: null,
@@ -33,8 +35,31 @@
   }
 
   function armAndRefresh() {
-    state.audioUnlocked = true;
+    unlockAudio();
     pollLatest({ flashInitial: true });
+  }
+
+  function unlockAudio() {
+    state.audioUnlocked = true;
+    if (state.audioPrimed) return;
+    state.audioPrimed = true;
+
+    try {
+      var AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      var context = state.audioContext || new AudioContext();
+      state.audioContext = context;
+      if (context.state === "suspended") context.resume();
+      var source = context.createOscillator();
+      var gain = context.createGain();
+      gain.gain.value = 0;
+      source.connect(gain);
+      gain.connect(context.destination);
+      source.start(0);
+      source.stop(context.currentTime + 0.02);
+    } catch {
+      // Audio unlock is a best-effort helper. The visual pulse still works.
+    }
   }
 
   function pollLatest(options) {
@@ -59,7 +84,7 @@
   }
 
   function pulseDemo() {
-    state.audioUnlocked = true;
+    unlockAudio();
     flashLog({
       id: "demo-" + Date.now(),
       mealName: "Demo meal",

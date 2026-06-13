@@ -8,6 +8,7 @@ Live:
 
 - Judge demo: https://itadaki-health.vercel.app/
 - Meta Display Web App: https://itadaki-health.vercel.app/glasses/index.html
+- Submission packet: https://itadaki-health.vercel.app/submission
 - Public repo: https://github.com/CarlKho-Minerva/itadaki-health
 
 ## Team
@@ -155,8 +156,11 @@ Recommended hackathon env:
 XAI_MODEL=grok-4.3
 XAI_REASONING_EFFORT=high
 XAI_TTS_VOICE_ID=eve
-XAI_VOICE_MODEL=grok-voice-think-fast-1.1
 ```
+
+`grok-voice-think-fast-1.1` belongs to the realtime Voice Agent path. The hackathon
+HUD uses `/v1/tts`, which takes `text`, `voice_id`, `language`, and MP3 output
+settings.
 
 ## Evidence Base
 

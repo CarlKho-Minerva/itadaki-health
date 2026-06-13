@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { readMealLogs } from "@/lib/server/meal-log-store";
 
 export const dynamic = "force-dynamic";
 
@@ -42,13 +43,23 @@ const importSteps = [
   "Chat with the combined Health Passport timeline",
 ];
 
-export default function ArchitecturePage() {
+function formatLogTime(timestamp: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(timestamp));
+}
+
+export default async function ArchitecturePage() {
+  const latestLogs = await readMealLogs(3);
+
   return (
     <main className="architecture-shell">
       <nav className="deck-nav architecture-nav" aria-label="Itadaki navigation">
         <Link href="/">Demo</Link>
         <Link href="/logs">Logs</Link>
         <Link href="/pitch">Pitch</Link>
+        <Link href="/submission">Submit</Link>
         <a href="/glasses/index.html">Glasses</a>
       </nav>
 
@@ -123,11 +134,36 @@ export default function ArchitecturePage() {
         </ol>
       </section>
 
+      <section className="architecture-live-log">
+        <div>
+          <span className="deck-kicker">Live log proof</span>
+          <h2>The same store feeds cards, CSV, FHIR, and markdown.</h2>
+          <p>
+            These are the latest records returned by the meal log store. If Vercel storage is empty,
+            the page shows a seeded fallback and labels it as demo data.
+          </p>
+        </div>
+        <div className="architecture-log-list">
+          {latestLogs.map((log) => (
+            <article key={log.id}>
+              <span>{formatLogTime(log.timestamp)}</span>
+              <strong>{log.mealName}</strong>
+              <p>
+                {log.calories} kcal · {log.protein ?? 0}g protein · {log.carbs ?? 0}g carbs ·{" "}
+                {log.fat ?? 0}g fat
+              </p>
+              {log.audioBrief ? <small>{log.audioBrief}</small> : null}
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="architecture-links">
         <a href="/api/health-passport">Health Passport markdown</a>
         <a href="/api/risk?userId=demo-user">Risk JSON</a>
         <a href="/api/analyze-meal?format=careplan">CarePlan shape</a>
         <a href="/demo-script">Presenter notes</a>
+        <a href="/submission">Submission packet</a>
       </section>
     </main>
   );
