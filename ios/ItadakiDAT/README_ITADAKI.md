@@ -52,23 +52,46 @@ The script builds the app, boots the `iPhone 17 Pro Max` simulator, installs Ita
 ### Physical iPhone + Ray-Ban Check
 
 1. Connect the iPhone by USB-C.
-2. Open the Xcode project:
+2. Enable Developer Mode on the iPhone:
+
+```text
+Settings -> Privacy & Security -> Developer Mode -> On
+```
+
+The iPhone usually reboots after this change. Reconnect it after reboot.
+
+3. From the repo root, run:
+
+```bash
+ios/ItadakiDAT/scripts/run_device.sh
+```
+
+This builds, installs, and launches Itadaki on the connected iPhone. If you prefer the Xcode UI path, open the project:
 
 ```bash
 open ios/ItadakiDAT/ItadakiDAT.xcodeproj
 ```
 
-3. Select the `ItadakiDAT` scheme.
-4. Select the connected iPhone, not a simulator.
-5. Confirm Signing & Capabilities uses team `V9WTTPBFK9`.
-6. In the Meta AI app, confirm the glasses are paired and Developer Mode is enabled.
-7. Run the app from Xcode.
-8. Tap `Connect Meta glasses`.
-9. Approve the app in Meta AI, then return to Itadaki.
-10. Tap the floating plus button to start a short camera session.
-11. Tap the camera button to capture one meal photo.
-12. Confirm `Analyze and log`.
-13. Check the logged card in the iOS app and the browser page at `/logs`.
+4. Select the `ItadakiDAT` scheme.
+5. Select the connected iPhone, not a simulator.
+6. Confirm Signing & Capabilities uses team `V9WTTPBFK9`.
+7. In the Meta AI app, confirm the glasses are paired and Developer Mode is enabled.
+8. Run the app from Xcode.
+9. Tap `Connect Meta glasses`.
+10. Approve the app in Meta AI, then return to Itadaki.
+11. Tap the floating plus button to start a short camera session.
+12. Tap the camera button to capture one meal photo.
+13. Confirm `Analyze and log`.
+14. Check the logged card in the iOS app and the browser page at `/logs`.
+
+Current observed device state:
+
+```text
+iPhone 17 Pro Max (Fully Paid NO INSTALLMENTS)
+iOS 26.5.1
+UDID: 00008150-000275DE0A00C01C
+Blocked until Developer Mode is enabled on the iPhone
+```
 
 ### Meta App Credentials
 
