@@ -3,94 +3,55 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=600, height=600, initial-scale=1" />
-    <meta name="description" content="Itadaki Health intentional meal logging for Meta Ray-Ban Display." />
+    <meta name="description" content="Itadaki Health calories MVP for Meta Ray-Ban Display." />
     <meta name="mrb-compatible" content="yes" />
-    <title>Itadaki Health Glasses</title>
+    <title>Itadaki Calories</title>
     <link rel="stylesheet" href="/glasses/styles.css" />
   </head>
   <body>
-    <main class="app" aria-label="Itadaki Health glasses app">
-      <section id="home" class="screen active">
-        <header>
-          <p>Itadaki Health</p>
-          <h1>Intentional log?</h1>
-        </header>
-
-        <div class="meal-card">
-          <span>Trigger</span>
-          <strong>Itadakimasu</strong>
-          <p>The camera may see food, but the user chooses when a meal becomes health data.</p>
+    <main class="app" aria-label="Itadaki Health calories MVP">
+      <section id="listen" class="screen active">
+        <p class="kicker">Itadaki</p>
+        <h1>Say itadakimasu</h1>
+        <p id="listen-status" class="hint">Listen for 2.6s, or tap Trigger.</p>
+        <div class="actions">
+          <button class="focusable" data-action="listen">Listen</button>
+          <button class="focusable" data-action="trigger">Trigger</button>
         </div>
+      </section>
 
-        <nav class="nav-grid">
-          <button class="focusable primary" data-action="analyze">Analyze</button>
-          <button class="focusable" data-action="skip">Skip</button>
-          <button class="focusable" data-action="manual">Manual</button>
-        </nav>
+      <section id="image" class="screen hidden">
+        <p class="kicker">Image</p>
+        <h1>Add food</h1>
+        <p id="image-status" class="hint">Photo if supported. Sample if not.</p>
+        <input id="photo-input" type="file" accept="image/*" capture="environment" hidden />
+        <div class="actions">
+          <button class="focusable" data-action="photo">Photo</button>
+          <button class="focusable" data-action="sample">Sample</button>
+        </div>
       </section>
 
       <section id="loading" class="screen hidden">
-        <header>
-          <p>Analyzing</p>
-          <h1>Meal context</h1>
-        </header>
-        <div class="spinner"></div>
-        <p class="status-text">Estimating food, uncertainty, and personal context.</p>
+        <p class="kicker">Grok</p>
+        <h1>Estimating</h1>
+        <p class="hint">Food image to calories.</p>
       </section>
 
       <section id="result" class="screen hidden">
-        <header>
-          <p>Health Passport</p>
-          <h1 id="meal-name">Harvest Bowl</h1>
-        </header>
-
-        <div class="result-card">
-          <span id="source-label">Demo mode</span>
-          <strong id="metric-line">705 kcal</strong>
-          <p id="context-line">Balanced protein. Track carbs against A1C trend.</p>
+        <p class="kicker">Calories</p>
+        <h1 id="calories">705</h1>
+        <p id="meal-name" class="hint">Sweetgreen Harvest Bowl</p>
+        <div class="actions">
+          <button class="focusable" data-action="log">Log</button>
+          <button class="focusable" data-action="restart">Again</button>
         </div>
-
-        <div class="mini-grid">
-          <div>
-            <span>Protein</span>
-            <strong id="protein">39g</strong>
-          </div>
-          <div>
-            <span>Sodium</span>
-            <strong id="sodium">980mg</strong>
-          </div>
-        </div>
-
-        <nav class="nav-row">
-          <button class="focusable primary" data-action="save">Save</button>
-          <button class="focusable" data-action="ask">Ask</button>
-          <button class="focusable" data-action="back">Back</button>
-        </nav>
-      </section>
-
-      <section id="question" class="screen hidden">
-        <header>
-          <p>Ask clinician</p>
-          <h1>One question</h1>
-        </header>
-        <div class="question-card">
-          <p id="clinician-question">
-            If my A1C is elevated but fasting glucose is normal, should I track post-meal glucose?
-          </p>
-        </div>
-        <button class="focusable primary bottom" data-action="back">Back</button>
       </section>
 
       <section id="saved" class="screen hidden">
-        <header>
-          <p>Timeline</p>
-          <h1>Saved</h1>
-        </header>
-        <div class="meal-card saved-card">
-          <span>Local event</span>
-          <p id="saved-text">Meal saved with uncertainty range and clinician question.</p>
-        </div>
-        <button class="focusable primary bottom" data-action="home">Done</button>
+        <p class="kicker">CSV</p>
+        <h1>Logged</h1>
+        <p id="saved-row" class="hint">Meal row saved.</p>
+        <button class="focusable solo" data-action="restart">Done</button>
       </section>
     </main>
     <script src="/glasses/app.js"></script>

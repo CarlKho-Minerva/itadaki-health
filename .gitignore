@@ -20,6 +20,9 @@
 # production
 /build
 
+# runtime demo logs
+/data/*.csv
+
 # misc
 .DS_Store
 *.pem

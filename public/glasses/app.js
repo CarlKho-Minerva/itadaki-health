@@ -1,50 +1,27 @@
 (function () {
   var state = {
-    screen: "home",
-    analysis: null,
-  };
-
-  var fallbackAnalysis = {
-    source: "mock",
-    mealName: "Sweetgreen Harvest Bowl",
-    nutrition: {
-      calories: { value: 705, unit: "kcal" },
-      protein: { value: 39, unit: "g" },
-      sodium: { value: 980, unit: "mg" },
+    transcript: "",
+    triggered: false,
+    imageData: null,
+    analysis: {
+      mealName: "Sweetgreen Harvest Bowl",
+      nutrition: { calories: { value: 705 } },
     },
-    clinicalContext: {
-      flags: ["Balanced protein for coding block"],
-      whyItMatters:
-        "For this synthetic profile, track repeated grain-heavy lunches against A1C and afternoon energy.",
-    },
-    clinicianQuestion:
-      "If my A1C is elevated but fasting glucose is normal, should I track post-meal glucose or meal timing?",
-    timelineEntry:
-      "Intentional food log captured after itadakimasu; saved with uncertainty and one clinician question.",
+    lastRow: "",
   };
 
   function init() {
-    var saved = localStorage.getItem("itadaki:last-analysis");
-    if (saved) {
-      try {
-        state.analysis = JSON.parse(saved);
-    } catch {
-        state.analysis = fallbackAnalysis;
-      }
-    } else {
-      state.analysis = fallbackAnalysis;
-    }
-
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("click", onClick);
-    renderAnalysis();
+    var input = document.getElementById("photo-input");
+    input.addEventListener("change", onPhoto);
     focusFirst();
   }
 
   function onClick(event) {
     var target = event.target.closest("[data-action]");
     if (!target) return;
-    handleAction(target.getAttribute("data-action"));
+    act(target.getAttribute("data-action"));
   }
 
   function onKeyDown(event) {
@@ -52,151 +29,204 @@
       var active = document.activeElement;
       if (active && active.getAttribute("data-action")) {
         event.preventDefault();
-        handleAction(active.getAttribute("data-action"));
+        act(active.getAttribute("data-action"));
       }
       return;
     }
 
     if (event.key === "Escape") {
       event.preventDefault();
-      navigate("home");
+      show("listen");
       return;
     }
 
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.key) >= 0) {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
       event.preventDefault();
-      moveFocus(event.key);
+      moveFocus(event.key === "ArrowLeft" ? -1 : 1);
     }
   }
 
-  function handleAction(action) {
-    switch (action) {
-      case "analyze":
-        analyzeMeal();
-        break;
-      case "skip":
-        state.analysis = {
-          source: "mock",
-          mealName: "Skipped",
-          nutrition: fallbackAnalysis.nutrition,
-          clinicalContext: {
-            flags: ["No food data stored"],
-            whyItMatters: "User saw food but did not consent to logging it.",
-          },
-          clinicianQuestion: "No clinician question generated.",
-          timelineEntry: "Meal skipped. No health timeline event stored.",
-        };
-        saveAnalysis();
-        renderAnalysis();
-        navigate("saved");
-        break;
-      case "manual":
-        state.analysis = fallbackAnalysis;
-        renderAnalysis();
-        navigate("result");
-        break;
-      case "save":
-        saveAnalysis();
-        navigate("saved");
-        break;
-      case "ask":
-        navigate("question");
-        break;
-      case "back":
-      case "home":
-        navigate("home");
-        break;
-      default:
-        navigate("home");
-    }
+  function act(action) {
+    if (action === "listen") return listen();
+    if (action === "trigger") return manualTrigger();
+    if (action === "photo") return document.getElementById("photo-input").click();
+    if (action === "sample") return analyze();
+    if (action === "log") return log();
+    if (action === "restart") return restart();
   }
 
-  function navigate(screenId) {
-    state.screen = screenId;
+  function show(id) {
     Array.prototype.forEach.call(document.querySelectorAll(".screen"), function (screen) {
-      screen.classList.toggle("hidden", screen.id !== screenId);
-      screen.classList.toggle("active", screen.id === screenId);
+      screen.classList.toggle("hidden", screen.id !== id);
+      screen.classList.toggle("active", screen.id === id);
     });
-    window.setTimeout(focusFirst, 30);
+    window.setTimeout(focusFirst, 20);
   }
 
   function focusFirst() {
-    var focusable = getFocusables();
-    if (focusable[0]) focusable[0].focus();
+    var first = document.querySelector(".screen.active .focusable");
+    if (first) first.focus();
   }
 
-  function getFocusables() {
-    return Array.prototype.slice.call(
+  function moveFocus(delta) {
+    var items = Array.prototype.slice.call(
       document.querySelectorAll(".screen.active .focusable"),
     );
+    if (!items.length) return;
+    var index = items.indexOf(document.activeElement);
+    var next = (Math.max(index, 0) + delta + items.length) % items.length;
+    items[next].focus();
   }
 
-  function moveFocus(key) {
-    var focusable = getFocusables();
-    if (!focusable.length) return;
-
-    var index = focusable.indexOf(document.activeElement);
-    if (index < 0) index = 0;
-
-    var delta = key === "ArrowLeft" || key === "ArrowUp" ? -1 : 1;
-    var next = (index + delta + focusable.length) % focusable.length;
-    focusable[next].focus();
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
   }
 
-  function analyzeMeal() {
-    navigate("loading");
+  function listen() {
+    setText("listen-status", "Listening...");
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(function (stream) {
+        var recorder = new MediaRecorder(stream);
+        var chunks = [];
+
+        recorder.ondataavailable = function (event) {
+          if (event.data.size) chunks.push(event.data);
+        };
+
+        recorder.onstop = function () {
+          stream.getTracks().forEach(function (track) {
+            track.stop();
+          });
+          transcribe(new Blob(chunks, { type: recorder.mimeType || "audio/webm" }));
+        };
+
+        recorder.start();
+        window.setTimeout(function () {
+          recorder.stop();
+        }, 2600);
+      })
+      .catch(function () {
+        setText("listen-status", "Mic unavailable. Tap Trigger.");
+      });
+  }
+
+  function transcribe(blob) {
+    var form = new FormData();
+    form.append("language", "ja");
+    form.append("file", blob, "itadakimasu.webm");
+
+    fetch("/api/transcribe", { method: "POST", body: form })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (payload) {
+        state.transcript = payload.text || "";
+        state.triggered = Boolean(payload.triggered);
+        if (!state.triggered) {
+          setText("listen-status", "Not caught. Tap Trigger.");
+          return;
+        }
+        setText("image-status", "Trigger caught. Add image.");
+        show("image");
+      })
+      .catch(function () {
+        setText("listen-status", "STT failed. Tap Trigger.");
+      });
+  }
+
+  function manualTrigger() {
+    state.transcript = "Itadakimasu";
+    state.triggered = true;
+    setText("image-status", "Trigger caught. Add image.");
+    show("image");
+  }
+
+  function onPhoto(event) {
+    var file = event.target.files && event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      state.imageData = String(reader.result);
+      analyze();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function analyze() {
+    show("loading");
     fetch("/api/analyze-meal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         scenarioId: "sweetgreen-harvest",
-        ritual: "itadakimasu",
-        mealText: "Meta Display Web App quick analysis.",
+        ritual: state.transcript || "itadakimasu",
+        imageData: state.imageData,
+        mealText: "Meta Ray-Ban minimal UI. Return a reliable calories estimate.",
       }),
     })
       .then(function (response) {
-        if (!response.ok) throw new Error("analysis failed");
         return response.json();
       })
       .then(function (payload) {
-        state.analysis = payload.analysis || fallbackAnalysis;
-        saveAnalysis();
-        renderAnalysis();
-        navigate("result");
+        state.analysis = payload.analysis || state.analysis;
+        renderResult();
+        show("result");
       })
       .catch(function () {
-        state.analysis = fallbackAnalysis;
-        saveAnalysis();
-        renderAnalysis();
-        navigate("result");
+        renderResult();
+        show("result");
       });
   }
 
-  function saveAnalysis() {
-    localStorage.setItem("itadaki:last-analysis", JSON.stringify(state.analysis));
+  function renderResult() {
+    var calories =
+      state.analysis &&
+      state.analysis.nutrition &&
+      state.analysis.nutrition.calories &&
+      state.analysis.nutrition.calories.value;
+    setText("calories", calories || "705");
+    setText("meal-name", state.analysis.mealName || "Estimated meal");
   }
 
-  function renderAnalysis() {
-    var analysis = state.analysis || fallbackAnalysis;
-    var nutrition = analysis.nutrition || fallbackAnalysis.nutrition;
-    var clinical = analysis.clinicalContext || fallbackAnalysis.clinicalContext;
-
-    setText("meal-name", analysis.mealName || "Meal");
-    setText("source-label", analysis.source === "xai" ? "Grok analysis" : "Demo mode");
-    setText(
-      "metric-line",
-      nutrition.calories.value + " " + nutrition.calories.unit,
-    );
-    setText("context-line", clinical.flags ? clinical.flags[0] : clinical.whyItMatters);
-    setText("protein", nutrition.protein.value + nutrition.protein.unit);
-    setText("sodium", nutrition.sodium.value + nutrition.sodium.unit);
-    setText("clinician-question", analysis.clinicianQuestion);
-    setText("saved-text", analysis.timelineEntry);
+  function log() {
+    var calories = state.analysis.nutrition.calories.value;
+    fetch("/api/log-meal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source: "meta-glasses",
+        transcript: state.transcript,
+        triggered: state.triggered,
+        mealName: state.analysis.mealName,
+        calories: calories,
+        imageLabel: state.imageData ? "glasses-photo" : "sample-image",
+      }),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (payload) {
+        state.lastRow = payload.csvRow || state.analysis.mealName + "," + calories;
+        localStorage.setItem("itadaki:last-row", state.lastRow);
+        setText("saved-row", state.lastRow);
+        show("saved");
+      })
+      .catch(function () {
+        state.lastRow = state.analysis.mealName + "," + calories;
+        localStorage.setItem("itadaki:last-row", state.lastRow);
+        setText("saved-row", state.lastRow);
+        show("saved");
+      });
   }
 
-  function setText(id, value) {
-    var element = document.getElementById(id);
-    if (element) element.textContent = value;
+  function restart() {
+    state.imageData = null;
+    state.transcript = "";
+    state.triggered = false;
+    setText("listen-status", "Listen for 2.6s, or tap Trigger.");
+    show("listen");
   }
 
   init();

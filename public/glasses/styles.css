@@ -1,13 +1,9 @@
 :root {
   --bg: #000;
-  --panel: #1c1e21;
-  --panel-soft: #24282c;
   --text: #fff;
-  --muted: #b0b3b8;
-  --green: #74d680;
-  --citrus: #f1c95b;
-  --danger: #ff7b67;
-  --focus: #00d4ff;
+  --muted: rgba(255, 255, 255, 0.66);
+  --dim: rgba(255, 255, 255, 0.28);
+  --green: #77df79;
 }
 
 * {
@@ -28,170 +24,94 @@ body {
 .app {
   width: 600px;
   height: 600px;
-  padding: 8px;
   background: var(--bg);
 }
 
 .screen {
   position: relative;
-  width: 584px;
-  height: 584px;
-  padding: 24px;
-  background: var(--panel);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  width: 600px;
+  height: 600px;
+  padding: 58px 54px;
+  background: var(--bg);
 }
 
 .hidden {
   display: none;
 }
 
-header {
-  height: 112px;
-}
-
-header p,
-.meal-card span,
-.result-card span,
-.mini-grid span {
-  margin: 0 0 8px;
+.kicker {
+  margin: 0 0 28px;
   color: var(--green);
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 h1 {
-  width: 100%;
+  max-width: 492px;
   margin: 0;
-  font-size: 28px;
-  line-height: 1.02;
+  font-size: 72px;
+  line-height: 0.96;
   letter-spacing: 0;
 }
 
-.meal-card,
-.result-card,
-.question-card {
-  min-height: 236px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-radius: 8px;
-  padding: 22px;
-  background: var(--panel-soft);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+#calories {
+  margin-top: 8px;
+  font-size: 168px;
+  line-height: 0.86;
 }
 
-.meal-card strong,
-.result-card strong {
-  margin: 8px 0 12px;
-  font-size: 38px;
-  line-height: 0.98;
-}
-
-.meal-card p,
-.result-card p,
-.question-card p,
-.status-text {
-  margin: 0;
+.hint {
+  max-width: 440px;
+  margin: 28px 0 0;
   color: var(--muted);
-  font-size: 18px;
-  line-height: 1.32;
+  font-size: 28px;
+  line-height: 1.22;
 }
 
-.nav-grid {
+.actions {
   position: absolute;
-  right: 24px;
-  bottom: 24px;
-  left: 24px;
+  right: 54px;
+  bottom: 54px;
+  left: 54px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-}
-
-.nav-row {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  left: 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
 }
 
 button {
-  height: 88px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
+  height: 86px;
+  border: 2px solid var(--dim);
+  border-radius: 999px;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
-  font-size: 18px;
+  background: transparent;
+  font-size: 24px;
   font-weight: 800;
 }
 
-button.primary {
-  color: #031107;
-  background: var(--green);
+button.solo {
+  position: absolute;
+  right: 54px;
+  bottom: 54px;
+  left: 54px;
+  width: calc(100% - 108px);
 }
 
 .focusable:focus,
 .focused {
   outline: 0;
-  opacity: 1;
-  transform: scale(0.96);
-  box-shadow: 0 0 22px rgba(0, 212, 255, 0.58);
+  border-color: var(--green);
+  color: #061107;
+  background: var(--green);
 }
 
-.spinner {
-  width: 96px;
-  height: 96px;
-  margin: 110px auto 26px;
-  border: 10px solid rgba(255, 255, 255, 0.12);
-  border-top-color: var(--green);
-  border-radius: 50%;
-  animation: spin 900ms linear infinite;
-}
-
-.status-text {
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.mini-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.mini-grid div {
-  border-radius: 8px;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.mini-grid strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 24px;
-}
-
-.bottom {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  left: 24px;
-  width: calc(100% - 48px);
-}
-
-.saved-card {
-  border-color: rgba(116, 214, 128, 0.3);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@media (max-width: 600px) {
+  html,
+  body,
+  .app,
+  .screen {
+    width: 100vw;
+    height: 100vh;
   }
 }

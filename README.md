@@ -1,6 +1,6 @@
 # Itadaki Health
 
-Wearable food logging that starts with consent, then turns meals into Health Passport context.
+Wearable food logging that starts with consent, then returns one number: calories.
 
 Built during the Autonomous Healthcare Hackathon on June 13, 2026.
 
@@ -17,21 +17,59 @@ Live:
 
 ## What It Does
 
-Itadaki Health turns the meal ritual "itadakimasu" into an explicit consent trigger for food logging on Meta Ray-Ban Display. The glasses can see food all day; the app logs only when the user intentionally begins a meal.
+Itadaki Health turns the meal ritual "itadakimasu" into an explicit consent trigger for food logging on Meta Ray-Ban Display. The MVP flow is intentionally small:
+
+```text
+say itadakimasu -> add food image -> estimate calories -> log CSV row
+```
 
 The demo has two surfaces:
 
-- Judge demo: Next.js, Framer Motion, xAI/Grok route, and Inngest trace.
+- Judge console: Next.js, Framer Motion, xAI STT proxy, image analysis route, and CSV download.
 - Glasses app: static `600x600` HTML/CSS/JS at `/glasses/index.html`, built for Meta Display Web Apps.
 
-## Demo Flow
+## Current MVP Pipeline
 
-1. User says or taps "Itadakimasu."
-2. Glasses show `Intentional log?` with `Analyze`, `Skip`, and `Manual`.
-3. The app estimates food and nutrition with uncertainty.
-4. Synthetic Health Passport context turns the meal into patient-relevant guidance.
-5. Inngest events record `trigger.started`, `meal.analyzed`, `timeline.updated`, and `care_context.generated`.
-6. The user gets one clinician question, not a diagnosis.
+1. Tap `Listen` on the glasses app.
+2. Say "itadakimasu" or tap `Trigger` as fallback.
+3. Tap `Photo` to open camera/file input if supported, or `Sample` for the hackathon demo.
+4. The server calls xAI from `/api/analyze-meal`; the glasses display only:
+
+```text
+Calories
+705
+```
+
+5. Tap `Log`; `/api/log-meal` creates a CSV row.
+
+## Put It On Meta Ray-Ban Display
+
+The official Wearables Developer Center pages require login, but the public Meta toolkit states the usable constraints: `600x600px`, D-pad/arrow navigation, dark background, high contrast, `.focusable` controls, browser testing with arrow keys, and public HTTPS deployment.
+
+Manual setup:
+
+1. Open the Meta AI app on your phone.
+2. Go to `Devices`.
+3. Open `Display Glasses settings`.
+4. Go to `App connections`.
+5. Open `Web apps`.
+6. Tap `Add a web app`.
+7. Name: `Itadaki Calories`.
+8. URL: `https://itadaki-health.vercel.app/glasses/index.html`.
+9. On the glasses, use the Neural Band/D-pad gestures. Arrow keys simulate this in browser.
+
+Browser test:
+
+```bash
+npm run dev
+open http://localhost:3000/glasses/index.html
+```
+
+Use:
+
+- Arrow left/right: move focus.
+- Enter: select.
+- Escape: back to listen screen.
 
 ## Why This Is Not A Cal AI Clone
 
@@ -39,9 +77,20 @@ Cal AI proved photo-based food logging can become a large consumer behavior loop
 
 - Intent before capture.
 - A wearable glanceable UI.
-- Health Passport context.
-- Uncertainty ranges.
-- One clinician question instead of medical advice.
+- A tiny calorie-only result for Meta Ray-Ban Display.
+- A CSV trail the user can inspect or export.
+- A later path into Health Passport context without using PHI during the hackathon.
+
+## xAI Speech Trigger
+
+`/api/transcribe` is the only place that talks to xAI Speech-to-Text. The browser and glasses app send an audio blob to the server, and the server adds:
+
+- `format=true`
+- `language=ja` by default
+- keyterms for `itadakimasu`, `いただきます`, `jal meokgetseumnida`, and `잘 먹겠습니다`
+- `file` as the last multipart field
+
+The MVP does not assume a system-level "Hey Meta" wake hook inside Web Apps. It uses an app-level `Listen` button and a `Trigger` fallback for the live demo.
 
 ## Evidence Base
 
@@ -77,7 +126,13 @@ Open:
 - Glasses app: `http://localhost:3000/glasses/index.html`
 - Inngest route: `http://localhost:3000/api/inngest`
 
-Without `XAI_API_KEY`, the app uses deterministic demo analysis. With `XAI_API_KEY`, `/api/analyze-meal` calls xAI through the OpenAI-compatible client.
+Without `XAI_API_KEY`, the app uses deterministic demo analysis. With `XAI_API_KEY`, `/api/analyze-meal` calls xAI through the OpenAI-compatible client and `/api/transcribe` calls xAI Speech-to-Text.
+
+## API Routes
+
+- `POST /api/transcribe`: multipart audio file -> xAI STT -> `{ text, triggered }`.
+- `POST /api/analyze-meal`: image or scenario -> xAI/Grok or fallback -> calorie estimate.
+- `POST /api/log-meal`: JSON meal event -> CSV row.
 
 ## Deploy
 
@@ -92,10 +147,10 @@ After deploy, add the public HTTPS `/glasses/index.html` URL to the Meta AI app 
 
 - `0:00-0:20` Cal AI proved people will pay to photograph food. Passive glasses need an intent layer.
 - `0:20-0:45` Itadakimasu is the consent moment.
-- `0:45-1:25` Demo the trigger, glasses HUD, meal analysis, Health Passport context, and timeline update.
+- `0:45-1:25` Demo the trigger, glasses HUD, meal image, calories number, and CSV row.
 - `1:25-1:55` Cite self-monitoring, image-based dietary assessment, and mindful eating research.
-- `1:55-2:20` Show the Cal AI business case and the wearable clinical-context wedge.
-- `2:20-2:50` Show Vercel, Grok, Inngest, Meta Web App, and synthetic Health Passport architecture.
+- `1:55-2:20` Show the Cal AI business case and the wearable intent wedge.
+- `2:20-2:50` Show Vercel, Grok, xAI STT, Meta Web App, and CSV logging.
 - `2:50-3:00` Close: this is patient agency at the moment behavior happens.
 
 ## Judge Questions
