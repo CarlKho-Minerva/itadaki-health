@@ -4,7 +4,7 @@
 
 **Project name:** Itadaki Health
 
-**Elevator pitch:** Cal AI for Meta Ray-Bans: one intentional meal frame, instant calories and voice, FHIR-ready history.
+**Elevator pitch:** Patient-directed meal memory for autonomous care: Ray-Bans capture one meal, Grok explains trends, Health Passport exports FHIR.
 
 ## Try It Out
 
@@ -20,15 +20,15 @@
 
 ### Inspiration
 
-Cal AI proved that people understand photo-based food logging. The missing piece for wearables is intent. Smart glasses can see a lot, but food logging should not become ambient surveillance.
+The hackathon theme is patient agency: patients owning and transporting their health data, then receiving more personalized care from AI based on their own context.
 
-Itadaki Health uses a small ritual as the consent moment. The user looks at food and says "itadakimasu", then the app captures one meal photo, analyzes it, logs it, and gets out of the way.
+That breaks if the AI only sees labs and visit summaries. Meals are part of the patient's health story, but they usually disappear into memory. Cal AI proved that photo-based food logging is a familiar habit. Itadaki turns that habit into patient-directed health data for wearables.
 
-The human story is simple: a lot of families, including Carl's Filipino community, carry health worries like blood pressure, fatty liver, LDL, diabetes risk, and kidney disease as vague background anxiety. The app does not scold the meal that is already on the table. It creates a better memory for the patient, then lets them share that record later with a dietician or clinician.
+The human story is simple: a lot of families, including Carl's Filipino community, carry health worries like blood pressure, fatty liver, LDL, diabetes risk, and kidney disease as vague background anxiety. Itadaki does not scold the meal that is already on the table. It helps the patient create a record they own, then transport that context into Health Passport, FHIR, or a future care conversation.
 
 ### What It Does
 
-Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
+Itadaki Health is a patient-directed meal memory flow for Meta Ray-Bans and iPhone.
 
 1. The user says "itadakimasu" or taps the low-power capture control.
 2. The iOS companion app uses Meta's Device Access Toolkit to capture a Ray-Ban camera frame.
@@ -37,7 +37,7 @@ Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
 5. xAI Text-to-Speech plays a short trend line such as "Your recent meals look steady so far."
 6. The meal appears as a card in the phone web app and exports to CSV, JSONL, FHIR R4, and Health Passport markdown.
 
-The punchline: Cal AI made the market obvious. Itadaki makes the same habit wearable, consented, and useful for care later.
+The punchline: Cal AI helps users track food. Itadaki helps patients own and transport food context for autonomous care.
 
 ### How We Built It
 
@@ -49,7 +49,7 @@ The backend has three core routes:
 - `/api/speak` generates a short MP3 confirmation with xAI Text-to-Speech.
 - `/api/log-meal` saves the log to JSONL and CSV for the demo, then exposes it through `/logs`, `/api/logs`, and `/api/health-passport`.
 
-Michelle worked on the FHIR lane: recent meals become FHIR-friendly Observations and a lightweight CarePlan shape for trend coaching. The project uses synthetic data only.
+Michelle worked on the FHIR lane: recent meals become FHIR-friendly Observations and a lightweight CarePlan shape for trend coaching. That makes the data portable instead of trapped inside another wellness app. The project uses synthetic data only.
 
 ### Challenges
 
@@ -59,11 +59,11 @@ We also had to keep the output calm. A face display is not a dashboard. The fina
 
 ### What We Learned
 
-The strongest product is not "can I eat this?" The meal is usually already here. The better product is "help me remember what happened, then show me the pattern later." That framing makes Itadaki Health feel less like food policing and more like patient agency.
+The strongest product is not "can I eat this?" The meal is usually already here. The stronger product is "help me remember what happened, then let me use that memory to direct care later." That is the patient-agency wedge.
 
 ### What Is Next
 
-The next version connects patient-directed health record import, such as a HealthEx-style consent flow, so labs, medications, notes, and meal logs can live in one Health Passport timeline. The long-term direction is local-first and patient-owned: cloud for the hackathon, on-device models when hardware allows.
+The next version connects patient-directed health record import, such as a HealthEx-style flow, so labs, medications, notes, and meal logs can live in one Health Passport timeline. The long-term direction is local-first and patient-owned: cloud for the hackathon, on-device models when hardware allows.
 
 ## Built With
 
@@ -100,7 +100,7 @@ xAI STT catches the intentional phrase in the companion app. Grok analyzes the m
 5. Confirm the photo, tap Analyze and log, and let the glasses pulse.
 6. Open /logs and expand the latest card.
 7. Open /architecture and point to the latest logs plus Health Passport export.
-8. End on the patient story: awareness now, better care record later.
+8. End on patient agency: daily context the patient owns and transports.
 
 ## If xAI Is Slow
 
@@ -109,7 +109,7 @@ xAI STT catches the intentional phrase in the companion app. Grok analyzes the m
 - Keep the glasses HUD open before logging; tap once to arm audio playback.
 - If the HUD does not pulse, press ArrowRight for the demo pulse and explain the polling path.
 - Open /logs to prove the card exists, then /architecture to show the data path.
-- Do not wait for live HealthEx or real PHI import. Show the mock consent import and FHIR export.
+- Do not wait for live HealthEx or real PHI import. Show patient-directed import and FHIR export.
 
 ## Project Media
 
@@ -122,18 +122,18 @@ xAI STT catches the intentional phrase in the companion app. Grok analyzes the m
 
 ## Three-Minute Demo
 
-0:00-0:20: "Cal AI proved people will photograph food. We built the glasses version without making every plate feel watched."
+0:00-0:20: "This hackathon is about patient agency. If patients will direct care with AI, they need data they own, not just EHR fragments."
 
-0:20-0:45: "The product hinge is intent. Itadakimasu is the switch: one meal frame, then the stream stops."
+0:20-0:45: "Cal AI proved people will photograph meals. Itadaki turns that familiar habit into portable health context from glasses."
 
-0:45-1:10: "Watch the actual path: DAT captures from the glasses, crops toward the food, and sends the image to Grok for structured calories and macros."
+0:45-1:10: "The patient initiates the capture. DAT grabs one Ray-Ban frame, crops toward food, and Grok returns structured calories and macros."
 
-1:10-1:35: "The glasses are not a dashboard. They stay blank, flash calories and macros for three seconds, speak once, then disappear."
+1:10-1:35: "The glasses are not the medical record. They flash the number, while xAI voice speaks only the recent trend."
 
-1:35-2:05: "The meal card is the receipt. It keeps the photo, the uncertainty, and the nutrition estimate so the user has a real memory later."
+1:35-2:05: "The phone is where agency lives: photo, uncertainty, estimate, and a record the patient can keep or export."
 
-2:05-2:30: "The Health Passport angle is what happens after repetition. Michelle maps the last five meals into FHIR-friendly trend context."
+2:05-2:30: "This becomes Health Passport context. Michelle maps recent meals into FHIR-friendly records for future AI or clinician review."
 
-2:30-2:50: "For the judges: Meta gets real DAT capture and display, xAI gets vision plus voice, Vercel runs the live app, and healthcare gets exportable records."
+2:30-2:50: "For the judges: xAI powers vision and voice, Vercel runs the app, Inngest models the event pipeline, and healthcare gets portable FHIR."
 
-2:50-3:00: "This is not food policing. It is awareness now and a better record later."
+2:50-3:00: "Patient agency starts with owning the moments care usually misses."

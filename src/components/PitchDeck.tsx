@@ -16,30 +16,30 @@ const reveal = {
 
 const principles = [
   {
-    label: "Consent first",
-    text: "One phrase or tap turns seeing into logging. No passive food diary.",
+    label: "Patient-directed capture",
+    text: "A phrase or tap turns one meal into patient-owned health data.",
   },
   {
-    label: "Glance, not dashboard",
-    text: "Calories and macros pulse for three seconds, then the display goes quiet.",
+    label: "Care on your own data",
+    text: "Grok explains the recent pattern, not generic diet advice.",
   },
   {
-    label: "Care memory later",
-    text: "The phone keeps the card, uncertainty, and FHIR-ready trend context.",
+    label: "Portable record",
+    text: "Health Passport and FHIR let the patient transport the context later.",
   },
 ];
 
 const architecture = [
-  "Meta DAT captures one glasses frame after explicit intent",
+  "Meta DAT captures one glasses frame after patient action",
   "iPhone crops toward food and stops the stream",
   "Vercel sends image to Grok for strict JSON nutrition",
-  "xAI TTS returns one short MP3 confirmation",
+  "xAI TTS returns one short trend line from the recent meal window",
   "Logs feed cards, CSV, JSONL, FHIR Observations, and Health Passport markdown",
   "Michelle's five-meal lane can generate a FHIR CarePlan shape",
 ];
 
 const demoSteps = [
-  "Show /pitch cover and state the Cal AI wedge",
+  "Show /pitch cover and state the patient-agency wedge",
   "Use the iOS DAT app to capture food from Ray-Bans",
   "Let the glasses pulse calories and macros for three seconds",
   "Open /logs and expand the newest card",
@@ -95,10 +95,10 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       >
         <div className="deck-copy">
           <span className="deck-kicker">Autonomous Healthcare Hackathon</span>
-          <h1>Cal AI for glasses, without the creep factor.</h1>
+          <h1>Patient-owned meal memory for autonomous care.</h1>
           <p>
-            Itadaki turns one intentional Ray-Ban meal frame into calories, voice feedback,
-            a clean log card, and FHIR-ready context for Michelle&apos;s lane.
+            Itadaki turns one Ray-Ban meal frame into a patient-owned record: calories on the
+            glasses, a trend voice from Grok, and FHIR-ready context for Health Passport.
           </p>
           <div className="deck-cta-row">
             <a className="deck-dark-link" href="#script">
@@ -148,12 +148,12 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band problem-band">
         <div>
           <span className="deck-kicker">Problem</span>
-          <h2>Food logging is solved. Wearable consent is not.</h2>
+          <h2>Autonomous care needs the patient&apos;s daily context.</h2>
         </div>
         <p>
-          Cal AI made the behavior obvious: photo, calories, history. Smart glasses make the same
-          loop more powerful and more sensitive. Itadaki keeps the habit, adds intent, and turns
-          repeat meals into care context.
+          The event thesis is patient agency: people will direct care with AI, own their health
+          data, and receive guidance based on their own biometrics. But the EHR misses daily life.
+          Itadaki turns meals into portable context the patient controls.
         </p>
       </section>
 
@@ -178,7 +178,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band story-band-deck">
         <div>
           <span className="deck-kicker">Human story</span>
-          <h2>Families remember warnings. Care needs records.</h2>
+          <h2>Families remember warnings. Patients need usable records.</h2>
         </div>
         <p>
           In Filipino families, blood pressure, fatty liver, LDL, and kidney worries often show up
@@ -190,14 +190,14 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-flow">
         <div className="deck-flow-copy">
           <span className="deck-kicker">Live flow</span>
-          <h2>Consent, capture, calories, care context.</h2>
+          <h2>Patient action, capture, calories, care context.</h2>
           <p>
             The face display should not become another app screen. The glasses flash the result.
-            The phone keeps the useful record.
+            The phone keeps the record the patient can transport later.
           </p>
         </div>
         <div className="deck-flow-rail">
-          {["Intent", "DAT photo", "Grok JSON", "3s HUD", "FHIR lane"].map(
+          {["Patient action", "DAT photo", "Grok JSON", "3s HUD", "FHIR lane"].map(
             (step, index) => (
               <div className="deck-flow-node" key={step}>
                 <span>{index + 1}</span>
@@ -229,7 +229,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band architecture-band" id="architecture">
         <div>
           <span className="deck-kicker">Architecture</span>
-          <h2>The camera runs for seconds. The memory lasts.</h2>
+          <h2>The capture lasts seconds. The patient owns the memory.</h2>
         </div>
         <ol>
           {architecture.map((item) => (

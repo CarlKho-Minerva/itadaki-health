@@ -281,7 +281,7 @@ On Vercel, file writes use serverless `/tmp`, so cross-instance persistence is n
 
 - `/logs`: iPhone-style cards with expandable meal details.
 - `/pitch`: 3-minute deck.
-- `/architecture`: Mermaid pipeline, audio strategy, and Health Passport/FHIR handoff.
+- `/architecture`: patient-agency pipeline, sponsor hooks, and Health Passport/FHIR handoff.
 
 ## Deploy
 
@@ -294,13 +294,13 @@ After deploy, add the public HTTPS `/glasses/index.html` URL to the Meta AI app 
 
 ## 3-Minute Pitch
 
-- `0:00-0:20` Cal AI proved people will pay to photograph food. Passive glasses need an intent layer.
-- `0:20-0:45` The consent moment is a meal gesture, not passive surveillance.
-- `0:45-1:25` Demo: look at meal, gesture/button, DAT photo, crop, xAI analysis, calories card.
-- `1:25-1:55` Awareness: the card turns a meal into a reviewable memory without scolding the user.
-- `1:55-2:20` Business: Cal AI made the habit obvious; Itadaki adds wearability and intent.
-- `2:20-2:50` Architecture: iOS DAT capture, Vercel, Grok, JSONL cards, FHIR, TTS, Health Passport markdown.
-- `2:50-3:00` Close: this is awareness at the moment behavior happens.
+- `0:00-0:20` Patient agency needs data the patient owns, not just EHR fragments.
+- `0:20-0:45` Cal AI proved the meal-photo habit; Itadaki makes it wearable and portable.
+- `0:45-1:25` Demo: patient action, DAT photo, food crop, Grok analysis, calories HUD, trend voice.
+- `1:25-1:55` The phone keeps the patient-owned record: photo, uncertainty, nutrition estimate.
+- `1:55-2:20` Health Passport turns repeated meals into FHIR-friendly context for future care.
+- `2:20-2:50` Sponsor hooks: xAI vision/voice, Vercel live app, Inngest event pipeline, healthcare FHIR.
+- `2:50-3:00` Close: patient agency starts with owning the moments care usually misses.
 
 ## Judge Questions
 

@@ -28,7 +28,7 @@ export const submissionLinks = [
 export const projectName = "Itadaki Health";
 
 export const elevatorPitch =
-  "Cal AI for Meta Ray-Bans: one intentional meal frame, instant calories and voice, FHIR-ready history.";
+  "Patient-directed meal memory for autonomous care: Ray-Bans capture one meal, Grok explains trends, Health Passport exports FHIR.";
 
 export const builtWith = [
   "Next.js",
@@ -86,7 +86,7 @@ export const cutIfSlow = [
   "Keep the glasses HUD open before logging; tap once to arm audio playback.",
   "If the HUD does not pulse, press ArrowRight for the demo pulse and explain the polling path.",
   "Open /logs to prove the card exists, then /architecture to show the data path.",
-  "Do not wait for live HealthEx or real PHI import. Show the mock consent import and FHIR export.",
+  "Do not wait for live HealthEx or real PHI import. Show patient-directed import and FHIR export.",
 ];
 
 export const demoChecklist = [
@@ -97,7 +97,7 @@ export const demoChecklist = [
   "Confirm the photo, tap Analyze and log, and let the glasses pulse.",
   "Open /logs and expand the latest card.",
   "Open /architecture and point to the latest logs plus Health Passport export.",
-  "End on the patient story: awareness now, better care record later.",
+  "End on patient agency: daily context the patient owns and transports.",
 ];
 
 export const mediaShotList = [
@@ -111,15 +111,15 @@ export const mediaShotList = [
 
 export const projectStoryMarkdown = `## Inspiration
 
-Cal AI proved that people understand photo-based food logging. The missing piece for wearables is intent. Smart glasses can see a lot, but food logging should not become ambient surveillance.
+The hackathon theme is patient agency: patients owning and transporting their health data, then receiving more personalized care from AI based on their own context.
 
-Itadaki Health uses a small ritual as the consent moment. The user looks at food and says "itadakimasu", then the app captures one meal photo, analyzes it, logs it, and gets out of the way.
+That breaks if the AI only sees labs and visit summaries. Meals are part of the patient's health story, but they usually disappear into memory. Cal AI proved that photo-based food logging is a familiar habit. Itadaki turns that habit into patient-directed health data for wearables.
 
-The human story is simple: a lot of families, including Carl's Filipino community, carry health worries like blood pressure, fatty liver, LDL, diabetes risk, and kidney disease as vague background anxiety. The app does not scold the meal that is already on the table. It creates a better memory for the patient, then lets them share that record later with a dietician or clinician.
+The human story is simple: a lot of families, including Carl's Filipino community, carry health worries like blood pressure, fatty liver, LDL, diabetes risk, and kidney disease as vague background anxiety. Itadaki does not scold the meal that is already on the table. It helps the patient create a record they own, then transport that context into Health Passport, FHIR, or a future care conversation.
 
 ## What it does
 
-Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
+Itadaki Health is a patient-directed meal memory flow for Meta Ray-Bans and iPhone.
 
 1. The user says "itadakimasu" or taps the low-power capture control.
 2. The iOS companion app uses Meta's Device Access Toolkit to capture a Ray-Ban camera frame.
@@ -128,7 +128,7 @@ Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
 5. xAI Text-to-Speech plays a short trend line such as "Your recent meals look steady so far."
 6. The meal appears as a card in the phone web app and exports to CSV, JSONL, FHIR R4, and Health Passport markdown.
 
-The punchline: Cal AI made the market obvious. Itadaki makes the same habit wearable, consented, and useful for care later.
+The punchline: Cal AI helps users track food. Itadaki helps patients own and transport food context for autonomous care.
 
 ## How we built it
 
@@ -140,7 +140,7 @@ The backend has three core routes:
 - \`/api/speak\` generates a short MP3 confirmation with xAI Text-to-Speech.
 - \`/api/log-meal\` saves the log to JSONL and CSV for the demo, then exposes it through \`/logs\`, \`/api/logs\`, and \`/api/health-passport\`.
 
-Michelle worked on the FHIR lane: recent meals become FHIR-friendly Observations and a lightweight CarePlan shape for trend coaching. The project uses synthetic data only.
+Michelle worked on the FHIR lane: recent meals become FHIR-friendly Observations and a lightweight CarePlan shape for trend coaching. That makes the data portable instead of trapped inside another wellness app. The project uses synthetic data only.
 
 ## Challenges
 
@@ -150,8 +150,8 @@ We also had to keep the output calm. A face display is not a dashboard. The fina
 
 ## What we learned
 
-The strongest product is not "can I eat this?" The meal is usually already here. The better product is "help me remember what happened, then show me the pattern later." That framing makes Itadaki Health feel less like food policing and more like patient agency.
+The strongest product is not "can I eat this?" The meal is usually already here. The stronger product is "help me remember what happened, then let me use that memory to direct care later." That is the patient-agency wedge.
 
 ## What is next
 
-The next version connects patient-directed health record import, such as a HealthEx-style consent flow, so labs, medications, notes, and meal logs can live in one Health Passport timeline. The long-term direction is local-first and patient-owned: cloud for the hackathon, on-device models when hardware allows.`;
+The next version connects patient-directed health record import, such as a HealthEx-style flow, so labs, medications, notes, and meal logs can live in one Health Passport timeline. The long-term direction is local-first and patient-owned: cloud for the hackathon, on-device models when hardware allows.`;

@@ -18,49 +18,49 @@ export const threeMinuteScript = [
   {
     time: "0:00-0:20",
     line:
-      "Cal AI proved people will photograph food. We built the glasses version without making every plate feel watched.",
+      "This hackathon is about patient agency. If patients will direct care with AI, they need data they own, not just EHR fragments.",
     action: "Screen: /pitch cover. Hold up Ray-Bans for one beat.",
   },
   {
     time: "0:20-0:45",
     line:
-      "The product hinge is intent. Itadakimasu is the switch: one meal frame, then the stream stops.",
+      "Cal AI proved people will photograph meals. Itadaki turns that familiar habit into portable health context from glasses.",
     action: "Screen: iPhone DAT app connected to Ray-Bans.",
   },
   {
     time: "0:45-1:10",
     line:
-      "Watch the actual path: DAT captures from the glasses, crops toward the food, and sends the image to Grok for structured calories and macros.",
+      "The patient initiates the capture. DAT grabs one Ray-Ban frame, crops toward food, and Grok returns structured calories and macros.",
     action: "Screen: live capture, photo confirmation, then Analyze and log.",
   },
   {
     time: "1:10-1:35",
     line:
-      "The glasses are not a dashboard. They stay blank, flash calories and macros for three seconds, speak once, then disappear.",
+      "The glasses are not the medical record. They flash the number, while xAI voice speaks only the recent trend.",
     action: "Screen: /glasses/index.html. Tap once first to arm audio.",
   },
   {
     time: "1:35-2:05",
     line:
-      "The meal card is the receipt. It keeps the photo, the uncertainty, and the nutrition estimate so the user has a real memory later.",
+      "The phone is where agency lives: photo, uncertainty, estimate, and a record the patient can keep or export.",
     action: "Screen: /logs. Expand the newest card.",
   },
   {
     time: "2:05-2:30",
     line:
-      "The Health Passport angle is what happens after repetition. Michelle maps the last five meals into FHIR-friendly trend context.",
+      "This becomes Health Passport context. Michelle maps recent meals into FHIR-friendly records for future AI or clinician review.",
     action: "Screen: /architecture Panel 2, then the live log proof card.",
   },
   {
     time: "2:30-2:50",
     line:
-      "For the judges: Meta gets real DAT capture and display, xAI gets vision plus voice, Vercel runs the live app, and healthcare gets exportable records.",
+      "For the judges: xAI powers vision and voice, Vercel runs the app, Inngest models the event pipeline, and healthcare gets portable FHIR.",
     action: "Screen: /architecture Panel 3 judge hooks.",
   },
   {
     time: "2:50-3:00",
     line:
-      "This is not food policing. It is awareness now and a better record later.",
+      "Patient agency starts with owning the moments care usually misses.",
     action: "Screen: latest log card or glasses pulse.",
   },
 ];
@@ -75,5 +75,5 @@ export const demoChecklist = [
   "Keep /glasses/index.html open before capture; it should stay mostly blank.",
   "Watch calories and macros fade in for three seconds after the new log lands.",
   "Open /logs and expand the latest card.",
-  "Open /architecture for the HealthEx/FHIR story.",
+  "Open /architecture for the patient-agency and FHIR story.",
 ];

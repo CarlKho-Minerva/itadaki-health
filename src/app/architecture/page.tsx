@@ -5,11 +5,11 @@ export const dynamic = "force-dynamic";
 
 const demoPipeline = [
   {
-    label: "Intent",
+    label: "Patient action",
     tone: "local",
     boxes: [
-      ["Itadakimasu", "spoken or tapped trigger"],
-      ["Meta Ray-Bans", "one meal frame, not passive logging"],
+      ["Itadakimasu", "patient starts the capture"],
+      ["Meta Ray-Bans", "one meal frame from daily life"],
     ],
   },
   {
@@ -25,7 +25,7 @@ const demoPipeline = [
     tone: "cloud",
     boxes: [
       ["/api/analyze-meal", "Grok vision returns strict JSON"],
-      ["/api/speak", "short MP3 reinforcement"],
+      ["/api/speak", "trend voice from recent meals"],
     ],
   },
   {
@@ -40,11 +40,11 @@ const demoPipeline = [
 
 const passportPipeline = [
   {
-    label: "Patient records",
+    label: "Own records",
     tone: "local",
     boxes: [
       ["HealthEx-style import", "labs, meds, notes, conditions"],
-      ["Health Passport", "patient-owned context layer"],
+      ["Health Passport", "patient-owned data layer"],
     ],
   },
   {
@@ -64,7 +64,7 @@ const passportPipeline = [
     ],
   },
   {
-    label: "Share later",
+    label: "Transport later",
     tone: "local",
     boxes: [
       ["Ask better question", "bring pattern to care"],
@@ -77,46 +77,46 @@ const runOfShow = [
   {
     time: "0:00",
     screen: "Pitch cover",
-    line: "Cal AI made food logging easy. We made it wearable without making it creepy.",
+    line: "Patient agency needs data the patient owns, not just EHR fragments.",
   },
   {
     time: "0:20",
     screen: "iPhone DAT app",
-    line: "I say itadakimasu. That is the consent moment. Now we capture one frame.",
+    line: "Cal AI proved meal photos. We make the habit wearable and portable.",
   },
   {
     time: "0:50",
     screen: "Glasses HUD",
-    line: "The display stays blank, then flashes calories and macros for three seconds.",
+    line: "The patient starts capture; the HUD flashes calories for three seconds.",
   },
   {
     time: "1:15",
     screen: "/logs",
-    line: "The same event becomes a card with photo, uncertainty, and nutrition estimate.",
+    line: "The same event becomes patient-owned meal memory with uncertainty.",
   },
   {
     time: "1:45",
     screen: "/architecture",
-    line: "This is the pipeline: DAT capture, Vercel, Grok, TTS, FHIR, Health Passport.",
+    line: "This is the autonomous care pipeline: capture, Grok, event log, FHIR, Health Passport.",
   },
   {
     time: "2:20",
     screen: "/api/health-passport",
-    line: "The endgame is not calorie shame. It is patient-owned context for future care.",
+    line: "The patient can own, transport, and reuse daily context for future care.",
   },
   {
     time: "2:50",
     screen: "Latest log card",
-    line: "Awareness now, better record later. That is the product.",
+    line: "Patient agency starts with owning the moments care usually misses.",
   },
 ];
 
 const judgeLenses = [
-  ["xAI", "Grok vision does the meal parse; xAI voice gives the hands-free feedback."],
-  ["Meta", "DAT handles real camera capture; the Web App keeps the glasses display tiny."],
-  ["Vercel", "The whole demo is a production HTTPS app with server routes and static HUD."],
-  ["Inngest", "Meal analysis is event-shaped: trigger, analysis, timeline, care context."],
-  ["Healthcare", "FHIR outputs and markdown exports make the data useful after the meal."],
+  ["xAI", "Grok turns patient-captured meals into structured data and spoken trend feedback."],
+  ["Meta", "DAT makes glasses a patient-directed capture layer; the display stays glanceable."],
+  ["Vercel", "The patient app, HUD, and server routes run as one production HTTPS demo."],
+  ["Inngest", "Autonomous care is event-shaped: capture, analysis, timeline, FHIR, follow-up."],
+  ["Healthcare", "FHIR and Health Passport make meal context portable beyond this app."],
 ];
 
 function formatLogTime(timestamp: string) {
@@ -187,9 +187,9 @@ export default async function ArchitecturePage() {
 
       <header className="pipeline-hero">
         <span>Itadaki Health architecture</span>
-        <h1>One consented meal frame. Four useful outputs.</h1>
+        <h1>One patient-captured meal. Four portable outputs.</h1>
         <p>
-          The camera runs for seconds. The glasses show only what belongs on your face. The phone
+          The camera runs for seconds. The glasses show only what belongs on your face. The patient
           keeps the record. Health Passport turns the history into care context later.
         </p>
       </header>
@@ -198,16 +198,16 @@ export default async function ArchitecturePage() {
         title="Panel 1 · Live demo pipeline"
         subtitle="This is what judges should see in the room: trigger, capture, calories, audio, card."
         groups={demoPipeline}
-        arrowLabels={["consented frame", "image payload", "JSON + audio"]}
+        arrowLabels={["patient frame", "image payload", "JSON + audio"]}
         returnLine="After the log lands, the stream stops and the glasses return to blank."
       />
 
       <PipelinePanel
         title="Panel 2 · Health Passport pipeline"
-        subtitle="This is the bigger thesis: patient records plus daily context become a better memory for care."
+        subtitle="This is the patient-agency thesis: own the data, transport the data, direct care with the data."
         groups={passportPipeline}
         arrowLabels={["records import", "meal history", "FHIR context"]}
-        returnLine="The patient shares a trend when they choose. The app does not police the meal in the moment."
+        returnLine="The patient decides when a trend becomes care context."
       />
 
       <section className="pipeline-panel">

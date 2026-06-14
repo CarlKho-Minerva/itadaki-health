@@ -140,15 +140,15 @@ export const citations = [
 export const pitchTimeline = [
   {
     time: "0:00-0:20",
-    title: "Market hook",
+    title: "Patient agency",
     line:
-      "Cal AI proved the behavior. We built the glasses version without turning every plate into surveillance.",
+      "Autonomous care needs data the patient owns, not just what sits inside the EHR.",
   },
   {
     time: "0:20-0:45",
-    title: "Consent moment",
+    title: "Cal AI wedge",
     line:
-      "Itadakimasu is the switch: one intentional meal frame, then the camera stops.",
+      "Cal AI proved the meal-photo habit. Itadaki turns that habit into portable health context.",
   },
   {
     time: "0:45-1:25",
@@ -158,26 +158,26 @@ export const pitchTimeline = [
   },
   {
     time: "1:25-1:55",
-    title: "Why it matters",
+    title: "Own and transport",
     line:
-      "The win is not shaming a meal. The win is a better memory for the patient later.",
+      "The patient gets a log they can keep, export, and bring into Health Passport or care.",
   },
   {
     time: "1:55-2:20",
-    title: "Care bridge",
+    title: "Personalized care",
     line:
-      "Michelle's FHIR lane turns the last five meals into trend context a clinician can actually inspect.",
+      "Michelle's FHIR lane turns recent meals into context for care based on the patient's own data.",
   },
   {
     time: "2:20-2:50",
     title: "Judge hooks",
-    line: "Meta gets DAT plus display. xAI gets vision and voice. Vercel gets the live app. Healthcare gets FHIR.",
+    line: "xAI gets vision and voice. Vercel gets the live app. Inngest gets the event pipeline. Healthcare gets FHIR.",
   },
   {
     time: "2:50-3:00",
     title: "Close",
     line:
-      "Awareness now, better record later. That is Itadaki Health.",
+      "Patient agency starts with owning the moments care usually misses.",
   },
 ];
 
