@@ -146,7 +146,7 @@ function seededLogs(limit: number): MealLog[] {
       fat: 25,
       imageLabel: "sample",
       uncertainty: "Seeded fallback shown when Vercel serverless storage is empty.",
-      audioBrief: "Logged 450 calories. Building your five meal trend.",
+      audioBrief: "I am learning your meal rhythm. A trend needs a few more.",
       mode: "demo",
       note: "Use persistent KV or Blob storage after the hackathon.",
       calorieRange: "400-520",

@@ -34,7 +34,7 @@ Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
 2. The iOS companion app uses Meta's Device Access Toolkit to capture a Ray-Ban camera frame.
 3. The app crops toward the food, sends the image to Grok, and receives structured nutrition estimates.
 4. The glasses stay blank until the result lands, then pulse calories and macros for about three seconds.
-5. xAI Text-to-Speech plays a short reinforcement such as "Logged 705 calories. Five-meal trend saved."
+5. xAI Text-to-Speech plays a short trend line such as "Your recent meals look steady so far."
 6. The meal appears as a card in the phone web app and exports to CSV, JSONL, FHIR R4, and Health Passport markdown.
 
 The punchline: Cal AI made the market obvious. Itadaki makes the same habit wearable, consented, and useful for care later.
@@ -82,7 +82,7 @@ xAI STT catches the intentional phrase in the companion app. Grok analyzes the m
 - FHIR R4 Observation Bundle for meal nutrients.
 - FHIR R4 CarePlan shape for trend coaching.
 - CSV, JSONL, and markdown export paths.
-- xAI TTS endpoint returns a short MP3 confirmation.
+- xAI TTS endpoint returns a short trend-aware MP3.
 
 ## PubMed / Research Citations
 

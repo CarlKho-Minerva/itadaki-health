@@ -72,19 +72,34 @@ async function respond(
 }
 
 function trendAudioBrief(analysis: MealAnalysis, intel: RiskIntelligence) {
-  const calories = Math.round(analysis.nutrition.calories.value);
   const mealCount = intel.recentMeals.length;
-  const hasTrend = intel.risk.risks.length > 0;
+  const risks = intel.risk.risks.join(" ").toLowerCase();
 
   if (mealCount < 3) {
-    return `Logged ${calories} calories. Building your five meal trend.`;
+    return "I am learning your meal rhythm. A trend needs a few more.";
   }
 
-  if (hasTrend) {
-    return `Logged ${calories} calories. One trend to review later.`;
+  if (risks.includes("low protein") && risks.includes("high sugar")) {
+    return "Recent meals are sweet and light on protein. Worth reviewing later.";
   }
 
-  return `Logged ${calories} calories. Your five meal trend looks steady.`;
+  if (risks.includes("low protein")) {
+    return "Protein has been light lately. Add that to your review list.";
+  }
+
+  if (risks.includes("high sugar")) {
+    return "Sugar has been clustering lately. Worth checking after the demo.";
+  }
+
+  if (risks.includes("repeated unhealthy") || risks.includes("high calorie")) {
+    return "Recent meals are running heavier. Review the pattern later.";
+  }
+
+  if (mealCount >= 5) {
+    return "Your last five meals look steady. Nothing loud to flag.";
+  }
+
+  return "Your recent meals look steady so far.";
 }
 
 type AnalyzeRequest = {

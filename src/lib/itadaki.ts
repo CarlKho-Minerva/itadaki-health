@@ -242,8 +242,8 @@ export function createMockAnalysis(
     uncertainty:
       "Portion estimates are approximate. This is coaching context, not medical advice or dosing guidance.",
     audioBrief: isSandwich
-      ? "Logged 790 calories. Estimate saved."
-      : "Logged 705 calories. Estimate saved.",
+      ? "Recent meals are running heavier. Review the pattern later."
+      : "Your recent meals look steady so far.",
     careActions: [
       "Log meal with uncertainty range",
       "Save one clinician question",
@@ -307,7 +307,9 @@ Rules:
 - Do not shame the meal or tell the user not to eat it; the meal is already here.
 - Do not mention Health Passport in user-facing output.
 - Be specific about uncertainty.
-- Keep audioBrief under 12 words. It should be calm, useful, and non-medical.
+- Keep audioBrief under 14 words.
+- Do not repeat calorie numbers in audioBrief; the HUD already shows them.
+- Make audioBrief conversational and trend-based.
 - Make the result useful in a 3-minute hackathon demo.
 
 Meal scenario: ${scenario.name}

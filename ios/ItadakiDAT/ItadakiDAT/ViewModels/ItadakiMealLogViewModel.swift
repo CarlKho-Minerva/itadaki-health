@@ -101,10 +101,10 @@ final class ItadakiMealLogViewModel {
       if let log = logResponse.log {
         logs.insert(log, at: 0)
         statusText = "Logged \(Int(log.calories)) calories."
-        await speakSummary(analysis.audioBrief ?? "Logged \(Int(log.calories)) calories.")
+        await speakSummary(analysis.audioBrief ?? "Meal saved. I will watch the pattern.")
       } else {
         await refreshLogs()
-        await speakSummary(analysis.audioBrief ?? "Meal logged.")
+        await speakSummary(analysis.audioBrief ?? "Meal saved. I will watch the pattern.")
       }
     } catch {
       showError("Meal analysis failed: \(error.localizedDescription)")

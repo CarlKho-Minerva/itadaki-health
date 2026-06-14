@@ -92,7 +92,7 @@
       protein: 39,
       carbs: 74,
       fat: 29,
-      audioBrief: "Logged 705 calories. Your five meal trend looks steady.",
+      audioBrief: "Your recent meals look steady so far.",
     });
   }
 
@@ -171,15 +171,15 @@
 
   function speechText(log) {
     if (log.audioBrief) return String(log.audioBrief).slice(0, 160);
-    return "Logged " + roundOrDash(log.calories, "") + " calories. " + trendText(log);
+    return trendText(log);
   }
 
   function trendText(log) {
     var calories = Number(log && log.calories);
     if (Number.isFinite(calories) && calories >= 800) {
-      return "Heavier meal. Review trend on phone.";
+      return "Recent meals are running heavier. Review the pattern later.";
     }
-    return "Five-meal trend saved.";
+    return "Your recent meals look steady so far.";
   }
 
   function roundOrDash(value, unit) {
