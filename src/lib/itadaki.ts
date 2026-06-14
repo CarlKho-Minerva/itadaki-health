@@ -140,44 +140,44 @@ export const citations = [
 export const pitchTimeline = [
   {
     time: "0:00-0:20",
-    title: "Hook",
+    title: "Market hook",
     line:
-      "Cal AI proved people will pay to photograph food. Passive glasses need an intent layer.",
+      "Cal AI proved the behavior. We built the glasses version without turning every plate into surveillance.",
   },
   {
     time: "0:20-0:45",
-    title: "Ritual",
+    title: "Consent moment",
     line:
-      "Itadakimasu is the consent moment: the glasses see food all day, but logging starts only when the user begins a meal.",
+      "Itadakimasu is the switch: one intentional meal frame, then the camera stops.",
   },
   {
     time: "0:45-1:25",
-    title: "Demo",
+    title: "Live demo",
     line:
-      "Trigger, glasses HUD, meal analysis, log card, trend-aware export.",
+      "Capture on iPhone DAT, parse with Grok, pulse calories on the glasses, save the card.",
   },
   {
     time: "1:25-1:55",
-    title: "Science",
+    title: "Why it matters",
     line:
-      "Self-monitoring, image-based food records, and mindful eating give the behavior loop a credible base.",
+      "The win is not shaming a meal. The win is a better memory for the patient later.",
   },
   {
     time: "1:55-2:20",
-    title: "Business",
+    title: "Care bridge",
     line:
-      "Cal AI made the market obvious. Itadaki Health adds consent, wearability, and trend memory.",
+      "Michelle's FHIR lane turns the last five meals into trend context a clinician can actually inspect.",
   },
   {
     time: "2:20-2:50",
-    title: "Architecture",
-    line: "Vercel, Grok, Inngest, Meta Web App, iOS DAT, and Michelle's FHIR lane.",
+    title: "Judge hooks",
+    line: "Meta gets DAT plus display. xAI gets vision and voice. Vercel gets the live app. Healthcare gets FHIR.",
   },
   {
     time: "2:50-3:00",
     title: "Close",
     line:
-      "This is not food policing. It is a clean record at the moment behavior happens.",
+      "Awareness now, better record later. That is Itadaki Health.",
   },
 ];
 

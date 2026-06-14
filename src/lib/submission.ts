@@ -28,7 +28,7 @@ export const submissionLinks = [
 export const projectName = "Itadaki Health";
 
 export const elevatorPitch =
-  "Hands-free meal logging for Meta Ray-Bans: say itadakimasu, capture food, hear calories, and sync FHIR-ready trends.";
+  "Cal AI for Meta Ray-Bans: one intentional meal frame, instant calories and voice, FHIR-ready history.";
 
 export const builtWith = [
   "Next.js",
@@ -127,6 +127,8 @@ Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
 4. The glasses stay blank until the result lands, then pulse calories and macros for about three seconds.
 5. xAI Text-to-Speech plays a short reinforcement such as "Logged 705 calories. Five-meal trend saved."
 6. The meal appears as a card in the phone web app and exports to CSV, JSONL, FHIR R4, and Health Passport markdown.
+
+The punchline: Cal AI made the market obvious. Itadaki makes the same habit wearable, consented, and useful for care later.
 
 ## How we built it
 

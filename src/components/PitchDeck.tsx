@@ -16,34 +16,34 @@ const reveal = {
 
 const principles = [
   {
-    label: "Intent first",
-    text: "The glasses can see food all day. Itadaki waits for a deliberate meal moment.",
+    label: "Consent first",
+    text: "One phrase or tap turns seeing into logging. No passive food diary.",
   },
   {
-    label: "Context after capture",
-    text: "A single card saves calories, uncertainty, and the image behind the estimate.",
+    label: "Glance, not dashboard",
+    text: "Calories and macros pulse for three seconds, then the display goes quiet.",
   },
   {
-    label: "One useful question",
-    text: "Later, the same log can become a care question or FHIR export without judging the meal.",
+    label: "Care memory later",
+    text: "The phone keeps the card, uncertainty, and FHIR-ready trend context.",
   },
 ];
 
 const architecture = [
-  "iOS DAT companion starts a short glasses camera session",
-  "Meal image is food-focus cropped and compressed on device",
-  "Vercel route sends photo to Grok with JSON-only output",
-  "Result writes a log card, CSV row, FHIR Observation bundle, and Health Passport markdown export",
-  "Michelle's risk lane maps repeated logs into a FHIR CarePlan",
-  "xAI TTS returns one short audio confirmation through the phone/glasses route",
+  "Meta DAT captures one glasses frame after explicit intent",
+  "iPhone crops toward food and stops the stream",
+  "Vercel sends image to Grok for strict JSON nutrition",
+  "xAI TTS returns one short MP3 confirmation",
+  "Logs feed cards, CSV, JSONL, FHIR Observations, and Health Passport markdown",
+  "Michelle's five-meal lane can generate a FHIR CarePlan shape",
 ];
 
 const demoSteps = [
-  "Open the iOS companion and connect Meta glasses",
-  "Look at the meal, then tap capture as the explicit intent gesture",
-  "Confirm the cropped photo",
-  "Show calories on the tiny display",
-  "Open /logs and show the same meal as a card",
+  "Show /pitch cover and state the Cal AI wedge",
+  "Use the iOS DAT app to capture food from Ray-Bans",
+  "Let the glasses pulse calories and macros for three seconds",
+  "Open /logs and expand the newest card",
+  "Open /architecture for the Health Passport and FHIR path",
 ];
 
 function formatTime(timestamp: string) {
@@ -82,6 +82,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
         <Link href="/logs">Logs</Link>
         <Link href="/architecture">Architecture</Link>
         <Link href="/demo-script">Script</Link>
+        <Link href="/submission">Submit</Link>
         <a href="/glasses/index.html">Glasses</a>
       </nav>
 
@@ -94,10 +95,10 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       >
         <div className="deck-copy">
           <span className="deck-kicker">Autonomous Healthcare Hackathon</span>
-          <h1>The meal is already here.</h1>
+          <h1>Cal AI for glasses, without the creep factor.</h1>
           <p>
-            Itadaki turns one meal photo from Meta Ray-Ban Display into a calorie estimate,
-            a clean log card, and a FHIR-ready event for Michelle&apos;s lane.
+            Itadaki turns one intentional Ray-Ban meal frame into calories, voice feedback,
+            a clean log card, and FHIR-ready context for Michelle&apos;s lane.
           </p>
           <div className="deck-cta-row">
             <a className="deck-dark-link" href="#script">
@@ -147,12 +148,12 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band problem-band">
         <div>
           <span className="deck-kicker">Problem</span>
-          <h2>Food logging is easy now. Intent is still missing.</h2>
+          <h2>Food logging is solved. Wearable consent is not.</h2>
         </div>
         <p>
-          Cal AI made the behavior obvious: take a photo, get calories, keep history. Smart
-          glasses raise a harder question. Should every plate the camera sees become health data?
-          Itadaki says no. The log starts only when the user acts.
+          Cal AI made the behavior obvious: photo, calories, history. Smart glasses make the same
+          loop more powerful and more sensitive. Itadaki keeps the habit, adds intent, and turns
+          repeat meals into care context.
         </p>
       </section>
 
@@ -177,26 +178,26 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band story-band-deck">
         <div>
           <span className="deck-kicker">Human story</span>
-          <h2>A meal should not become vague health anxiety.</h2>
+          <h2>Families remember warnings. Care needs records.</h2>
         </div>
         <p>
           In Filipino families, blood pressure, fatty liver, LDL, and kidney worries often show up
-          as half-remembered advice at dinner. Itadaki gives the person a record they can bring
-          back to care: what they ate, how uncertain the estimate was, and what to ask next.
+          as half-remembered advice at dinner. Itadaki turns the moment into a patient-owned record:
+          what I ate, what the estimate was, and what pattern I should ask about later.
         </p>
       </section>
 
       <section className="deck-flow">
         <div className="deck-flow-copy">
           <span className="deck-kicker">Live flow</span>
-          <h2>Gesture, photo, calories, context.</h2>
+          <h2>Consent, capture, calories, care context.</h2>
           <p>
-            The demo stays small on purpose. The glasses surface only needs a number. The phone
-            keeps the photo, the log card, and the trend-aware export path.
+            The face display should not become another app screen. The glasses flash the result.
+            The phone keeps the useful record.
           </p>
         </div>
         <div className="deck-flow-rail">
-          {["Intent gesture", "DAT photo", "Grok estimate", "Log card", "FHIR lane"].map(
+          {["Intent", "DAT photo", "Grok JSON", "3s HUD", "FHIR lane"].map(
             (step, index) => (
               <div className="deck-flow-node" key={step}>
                 <span>{index + 1}</span>
@@ -228,7 +229,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-band architecture-band" id="architecture">
         <div>
           <span className="deck-kicker">Architecture</span>
-          <h2>The native app does capture. The web app does demo and review.</h2>
+          <h2>The camera runs for seconds. The memory lasts.</h2>
         </div>
         <ol>
           {architecture.map((item) => (
@@ -240,7 +241,7 @@ export default function PitchDeck({ initialLogs }: PitchDeckProps) {
       <section className="deck-script" id="script">
         <div>
           <span className="deck-kicker">Talk track</span>
-          <h2>Three minutes, no wandering.</h2>
+          <h2>Three minutes, built around what judges care about.</h2>
         </div>
         <div className="deck-timeline">
           {pitchTimeline.map((item) => (

@@ -3,44 +3,120 @@ import { readMealLogs } from "@/lib/server/meal-log-store";
 
 export const dynamic = "force-dynamic";
 
-const mermaid = `flowchart LR
-  A[Meta Ray-Ban camera] --> B[iOS DAT companion]
-  B --> C[Food-focus crop]
-  C --> D[Vercel /api/analyze-meal]
-  D --> E[xAI Grok vision JSON]
-  E --> F[Meal log JSONL + CSV]
-  F --> G[/logs phone cards]
-  F --> H[/api/health-passport markdown]
-  E --> I[FHIR Observation Bundle]
-  F --> J[Michelle risk engine]
-  J --> K[FHIR CarePlan]
-  E --> L[/api/speak xAI TTS]
-  L --> M[Short audio feedback]`;
-
-const glassesPayload = [
-  "Blank until needed",
-  "Three-second calorie pulse",
-  "Macros in the same pulse",
-  "Short audio reinforcement",
-  "No diagnosis",
+const demoPipeline = [
+  {
+    label: "Intent",
+    tone: "local",
+    boxes: [
+      ["Itadakimasu", "spoken or tapped trigger"],
+      ["Meta Ray-Bans", "one meal frame, not passive logging"],
+    ],
+  },
+  {
+    label: "iPhone DAT",
+    tone: "local",
+    boxes: [
+      ["Short camera session", "stream stops after capture"],
+      ["Food crop", "cleaner image before analysis"],
+    ],
+  },
+  {
+    label: "Vercel + xAI",
+    tone: "cloud",
+    boxes: [
+      ["/api/analyze-meal", "Grok vision returns strict JSON"],
+      ["/api/speak", "short MP3 reinforcement"],
+    ],
+  },
+  {
+    label: "User output",
+    tone: "data",
+    boxes: [
+      ["Glasses HUD", "3-second calories + macros pulse"],
+      ["Phone card", "photo, uncertainty, breakdown"],
+    ],
+  },
 ];
 
-const passportPayload = [
-  "timestamp",
-  "meal name",
-  "calories with range",
-  "protein, carbs, fat, sodium",
-  "image thumbnail",
-  "uncertainty",
-  "FHIR Observations",
-  "CarePlan trend hooks",
+const passportPipeline = [
+  {
+    label: "Patient records",
+    tone: "local",
+    boxes: [
+      ["HealthEx-style import", "labs, meds, notes, conditions"],
+      ["Health Passport", "patient-owned context layer"],
+    ],
+  },
+  {
+    label: "Meal memory",
+    tone: "data",
+    boxes: [
+      ["JSONL + CSV", "hackathon logging trail"],
+      ["Last 5 meals", "Michelle's trend window"],
+    ],
+  },
+  {
+    label: "FHIR lane",
+    tone: "cloud",
+    boxes: [
+      ["Observation Bundle", "nutrients as structured records"],
+      ["CarePlan shape", "coaching trend, not diagnosis"],
+    ],
+  },
+  {
+    label: "Share later",
+    tone: "local",
+    boxes: [
+      ["Ask better question", "bring pattern to care"],
+      ["Patient decides", "export or keep private"],
+    ],
+  },
 ];
 
-const importSteps = [
-  "Connect HealthEx-style patient record access",
-  "Import labs, medications, visit notes, and problem list",
-  "Add Itadaki meal logs as patient-owned daily context",
-  "Chat with the combined Health Passport timeline",
+const runOfShow = [
+  {
+    time: "0:00",
+    screen: "Pitch cover",
+    line: "Cal AI made food logging easy. We made it wearable without making it creepy.",
+  },
+  {
+    time: "0:20",
+    screen: "iPhone DAT app",
+    line: "I say itadakimasu. That is the consent moment. Now we capture one frame.",
+  },
+  {
+    time: "0:50",
+    screen: "Glasses HUD",
+    line: "The display stays blank, then flashes calories and macros for three seconds.",
+  },
+  {
+    time: "1:15",
+    screen: "/logs",
+    line: "The same event becomes a card with photo, uncertainty, and nutrition estimate.",
+  },
+  {
+    time: "1:45",
+    screen: "/architecture",
+    line: "This is the pipeline: DAT capture, Vercel, Grok, TTS, FHIR, Health Passport.",
+  },
+  {
+    time: "2:20",
+    screen: "/api/health-passport",
+    line: "The endgame is not calorie shame. It is patient-owned context for future care.",
+  },
+  {
+    time: "2:50",
+    screen: "Latest log card",
+    line: "Awareness now, better record later. That is the product.",
+  },
+];
+
+const judgeLenses = [
+  ["xAI", "Grok vision does the meal parse; xAI voice gives the hands-free feedback."],
+  ["Meta", "DAT handles real camera capture; the Web App keeps the glasses display tiny."],
+  ["Vercel", "The whole demo is a production HTTPS app with server routes and static HUD."],
+  ["Inngest", "Meal analysis is event-shaped: trigger, analysis, timeline, care context."],
+  ["Healthcare", "FHIR outputs and markdown exports make the data useful after the meal."],
 ];
 
 function formatLogTime(timestamp: string) {
@@ -50,120 +126,142 @@ function formatLogTime(timestamp: string) {
   }).format(new Date(timestamp));
 }
 
+function PipelinePanel({
+  title,
+  subtitle,
+  groups,
+  arrowLabels,
+  returnLine,
+}: {
+  title: string;
+  subtitle: string;
+  groups: typeof demoPipeline;
+  arrowLabels: string[];
+  returnLine: string;
+}) {
+  return (
+    <section className="pipeline-panel">
+      <div className="pipeline-panel-head">
+        <span>{title}</span>
+        <p>{subtitle}</p>
+      </div>
+      <div className="pipeline-flow">
+        {groups.map((group, index) => (
+          <div className="pipeline-step-wrap" key={group.label}>
+            <div className={`pipeline-group ${group.tone}`}>
+              <div className="pipeline-group-label">{group.label}</div>
+              {group.boxes.map(([title, detail]) => (
+                <div className="pipeline-box" key={title}>
+                  <strong>{title}</strong>
+                  <small>{detail}</small>
+                </div>
+              ))}
+            </div>
+            {index < groups.length - 1 ? (
+              <div className="pipeline-arrow">
+                <span>→</span>
+                <small>{arrowLabels[index]}</small>
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+      <div className="pipeline-return">{returnLine}</div>
+    </section>
+  );
+}
+
 export default async function ArchitecturePage() {
   const latestLogs = await readMealLogs(3);
 
   return (
-    <main className="architecture-shell">
-      <nav className="deck-nav architecture-nav" aria-label="Itadaki navigation">
+    <main className="pipeline-shell">
+      <nav className="deck-nav pipeline-nav" aria-label="Itadaki navigation">
         <Link href="/">Demo</Link>
-        <Link href="/logs">Logs</Link>
         <Link href="/pitch">Pitch</Link>
+        <Link href="/logs">Logs</Link>
+        <Link href="/demo-script">Script</Link>
         <Link href="/submission">Submit</Link>
         <a href="/glasses/index.html">Glasses</a>
       </nav>
 
-      <section className="architecture-hero">
-        <div>
-          <span className="deck-kicker">Architecture</span>
-          <h1>Capture on the phone. Whisper back through the glasses.</h1>
-          <p>
-            The working build keeps the face display quiet. The iOS DAT companion captures the
-            Ray-Ban photo, crops it toward the plate, sends it to Grok, stores the meal, and plays
-            one short audio confirmation.
-          </p>
-        </div>
-        <aside className="architecture-glasses">
-          <span>Calories</span>
-          <strong>705</strong>
-          <p>Logged. Estimate saved.</p>
-        </aside>
-      </section>
+      <header className="pipeline-hero">
+        <span>Itadaki Health architecture</span>
+        <h1>One consented meal frame. Four useful outputs.</h1>
+        <p>
+          The camera runs for seconds. The glasses show only what belongs on your face. The phone
+          keeps the record. Health Passport turns the history into care context later.
+        </p>
+      </header>
 
-      <section className="architecture-grid">
-        <article>
-          <span>01</span>
-          <h2>What goes on the glasses</h2>
-          <ul>
-            {glassesPayload.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </article>
-        <article>
-          <span>02</span>
-          <h2>What goes to Health Passport</h2>
-          <ul>
-            {passportPayload.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </article>
-        <article>
-          <span>03</span>
-          <h2>Why this avoids food policing</h2>
-          <p>
-            The meal is already here. Itadaki logs what happened, gives a small estimate, and saves
-            the trend for later care conversations instead of scolding in the moment.
-          </p>
-        </article>
-      </section>
+      <PipelinePanel
+        title="Panel 1 · Live demo pipeline"
+        subtitle="This is what judges should see in the room: trigger, capture, calories, audio, card."
+        groups={demoPipeline}
+        arrowLabels={["consented frame", "image payload", "JSON + audio"]}
+        returnLine="After the log lands, the stream stops and the glasses return to blank."
+      />
 
-      <section className="architecture-diagram">
-        <div>
-          <span className="deck-kicker">Mermaid</span>
-          <h2>Pipeline Michelle can plug into.</h2>
-        </div>
-        <pre>{mermaid}</pre>
-      </section>
+      <PipelinePanel
+        title="Panel 2 · Health Passport pipeline"
+        subtitle="This is the bigger thesis: patient records plus daily context become a better memory for care."
+        groups={passportPipeline}
+        arrowLabels={["records import", "meal history", "FHIR context"]}
+        returnLine="The patient shares a trend when they choose. The app does not police the meal in the moment."
+      />
 
-      <section className="architecture-import">
-        <div>
-          <span className="deck-kicker">Health data import</span>
-          <h2>Mock HealthEx connect flow.</h2>
-          <p>
-            For the demo, this is a safe mock. The B2C thesis is simple: patient records come in
-            through a consented import, meal logs join the timeline, then the patient can chat with
-            their Health Passport before choosing what to share with care.
-          </p>
+      <section className="pipeline-panel">
+        <div className="pipeline-panel-head">
+          <span>Panel 3 · Three-minute run of show</span>
+          <p>Use this as the literal screen choreography. Do not wander.</p>
         </div>
-        <ol>
-          {importSteps.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="architecture-live-log">
-        <div>
-          <span className="deck-kicker">Live log proof</span>
-          <h2>The same store feeds cards, CSV, FHIR, and markdown.</h2>
-          <p>
-            These are the latest records returned by the meal log store. If Vercel storage is empty,
-            the page shows a seeded fallback and labels it as demo data.
-          </p>
-        </div>
-        <div className="architecture-log-list">
-          {latestLogs.map((log) => (
-            <article key={log.id}>
-              <span>{formatLogTime(log.timestamp)}</span>
-              <strong>{log.mealName}</strong>
-              <p>
-                {log.calories} kcal · {log.protein ?? 0}g protein · {log.carbs ?? 0}g carbs ·{" "}
-                {log.fat ?? 0}g fat
-              </p>
-              {log.audioBrief ? <small>{log.audioBrief}</small> : null}
+        <div className="pipeline-rundown">
+          {runOfShow.map((item) => (
+            <article key={item.time}>
+              <span>{item.time}</span>
+              <strong>{item.screen}</strong>
+              <p>{item.line}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="architecture-links">
+      <section className="pipeline-bottom-grid">
+        <article className="pipeline-judge-card">
+          <span>Judge hooks</span>
+          <h2>Translate the same demo five ways.</h2>
+          <div>
+            {judgeLenses.map(([label, line]) => (
+              <p key={label}>
+                <strong>{label}:</strong> {line}
+              </p>
+            ))}
+          </div>
+        </article>
+
+        <article className="pipeline-live-card">
+          <span>Live log proof</span>
+          <h2>Latest stored meals</h2>
+          <div className="pipeline-log-list">
+            {latestLogs.map((log) => (
+              <section key={log.id}>
+                <small>{formatLogTime(log.timestamp)}</small>
+                <strong>{log.mealName}</strong>
+                <p>
+                  {log.calories} kcal · {log.protein ?? 0}g protein · {log.carbs ?? 0}g carbs ·{" "}
+                  {log.fat ?? 0}g fat
+                </p>
+              </section>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <section className="pipeline-links">
         <a href="/api/health-passport">Health Passport markdown</a>
+        <a href="/api/logs?limit=3">Latest logs JSON</a>
         <a href="/api/risk?userId=demo-user">Risk JSON</a>
         <a href="/api/analyze-meal?format=careplan">CarePlan shape</a>
-        <a href="/demo-script">Presenter notes</a>
-        <a href="/submission">Submission packet</a>
       </section>
     </main>
   );

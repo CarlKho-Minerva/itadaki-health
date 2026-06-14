@@ -18,50 +18,50 @@ export const threeMinuteScript = [
   {
     time: "0:00-0:20",
     line:
-      "I am Carl. I built Itadaki Health because food logging should be intentional, not ambient surveillance.",
-    action: "Show the Ray-Bans and the tiny calories HUD.",
+      "Cal AI proved people will photograph food. We built the glasses version without making every plate feel watched.",
+    action: "Screen: /pitch cover. Hold up Ray-Bans for one beat.",
   },
   {
     time: "0:20-0:45",
     line:
-      "Cal AI proved the habit: take a meal photo, get calories, keep a history. We upgrade that for wearables with a consent moment.",
-    action: "Point to Itadakimasu trigger and the capture flow.",
+      "The product hinge is intent. Itadakimasu is the switch: one meal frame, then the stream stops.",
+    action: "Screen: iPhone DAT app connected to Ray-Bans.",
   },
   {
     time: "0:45-1:10",
     line:
-      "I say itadakimasu, the iPhone DAT companion captures one Ray-Ban photo, crops toward the plate, sends it to Grok, and stops the stream.",
-    action: "Run Listen or Arm/Capture, then Analyze and log.",
+      "Watch the actual path: DAT captures from the glasses, crops toward the food, and sends the image to Grok for structured calories and macros.",
+    action: "Screen: live capture, photo confirmation, then Analyze and log.",
   },
   {
     time: "1:10-1:35",
     line:
-      "The glasses should not become a dashboard on my face. They stay blank, flash calories and macros for three seconds, speak once, then disappear.",
-    action: "Open the glasses Web App before logging; let the latest log pulse in automatically.",
+      "The glasses are not a dashboard. They stay blank, flash calories and macros for three seconds, speak once, then disappear.",
+    action: "Screen: /glasses/index.html. Tap once first to arm audio.",
   },
   {
     time: "1:35-2:05",
     line:
-      "The real value is what happens after five meals. Michelle maps the last meals into a FHIR-friendly trend, so the user gets reinforcement and a dietician gets more than memory.",
-    action: "Open /logs and expand the latest card.",
+      "The meal card is the receipt. It keeps the photo, the uncertainty, and the nutrition estimate so the user has a real memory later.",
+    action: "Screen: /logs. Expand the newest card.",
   },
   {
     time: "2:05-2:30",
     line:
-      "This is B2C Health Passport: the patient imports records, adds daily context from wearables, and can chat with their own timeline before sharing it with care.",
-    action: "Open /architecture or /api/health-passport.",
+      "The Health Passport angle is what happens after repetition. Michelle maps the last five meals into FHIR-friendly trend context.",
+    action: "Screen: /architecture Panel 2, then the live log proof card.",
   },
   {
     time: "2:30-2:50",
     line:
-      "Today it runs through Vercel and xAI. The Health Passport direction is patient-owned, and the on-device path is exactly why my Qualcomm Health Passport work matters.",
-    action: "Show architecture page.",
+      "For the judges: Meta gets real DAT capture and display, xAI gets vision plus voice, Vercel runs the live app, and healthcare gets exportable records.",
+    action: "Screen: /architecture Panel 3 judge hooks.",
   },
   {
     time: "2:50-3:00",
     line:
-      "This is not food policing. It is awareness at the moment behavior happens, and a better record for care later.",
-    action: "End on latest log card.",
+      "This is not food policing. It is awareness now and a better record later.",
+    action: "Screen: latest log card or glasses pulse.",
   },
 ];
 

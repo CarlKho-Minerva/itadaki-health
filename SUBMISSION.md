@@ -4,7 +4,7 @@
 
 **Project name:** Itadaki Health
 
-**Elevator pitch:** Hands-free meal logging for Meta Ray-Bans: say itadakimasu, capture food, hear calories, and sync FHIR-ready trends.
+**Elevator pitch:** Cal AI for Meta Ray-Bans: one intentional meal frame, instant calories and voice, FHIR-ready history.
 
 ## Try It Out
 
@@ -36,6 +36,8 @@ Itadaki Health is a hands-free meal logging flow for Meta Ray-Bans and iPhone.
 4. The glasses stay blank until the result lands, then pulse calories and macros for about three seconds.
 5. xAI Text-to-Speech plays a short reinforcement such as "Logged 705 calories. Five-meal trend saved."
 6. The meal appears as a card in the phone web app and exports to CSV, JSONL, FHIR R4, and Health Passport markdown.
+
+The punchline: Cal AI made the market obvious. Itadaki makes the same habit wearable, consented, and useful for care later.
 
 ### How We Built It
 
@@ -120,18 +122,18 @@ xAI STT catches the intentional phrase in the companion app. Grok analyzes the m
 
 ## Three-Minute Demo
 
-0:00-0:20: "I built Itadaki Health because food logging should be intentional, not ambient surveillance."
+0:00-0:20: "Cal AI proved people will photograph food. We built the glasses version without making every plate feel watched."
 
-0:20-0:45: "Cal AI proved the habit: take a meal photo, get calories, keep a history. We upgrade that for wearables with a consent moment."
+0:20-0:45: "The product hinge is intent. Itadakimasu is the switch: one meal frame, then the stream stops."
 
-0:45-1:10: "I say itadakimasu, the iPhone DAT companion captures one Ray-Ban photo, crops toward the plate, sends it to Grok, and stops the stream."
+0:45-1:10: "Watch the actual path: DAT captures from the glasses, crops toward the food, and sends the image to Grok for structured calories and macros."
 
-1:10-1:35: "The glasses should not become a dashboard on my face. They stay blank, flash calories and macros for three seconds, speak once, then disappear."
+1:10-1:35: "The glasses are not a dashboard. They stay blank, flash calories and macros for three seconds, speak once, then disappear."
 
-1:35-2:05: "The real value is what happens after five meals. Michelle maps the last meals into a FHIR-friendly trend, so the user gets reinforcement and a dietician gets more than memory."
+1:35-2:05: "The meal card is the receipt. It keeps the photo, the uncertainty, and the nutrition estimate so the user has a real memory later."
 
-2:05-2:30: "This is B2C Health Passport: the patient imports records, adds daily context from wearables, and can chat with their own timeline before sharing it with care."
+2:05-2:30: "The Health Passport angle is what happens after repetition. Michelle maps the last five meals into FHIR-friendly trend context."
 
-2:30-2:50: "Today it runs through Vercel and xAI. The Health Passport direction is patient-owned, and the on-device path is exactly why Carl's Qualcomm Health Passport work matters."
+2:30-2:50: "For the judges: Meta gets real DAT capture and display, xAI gets vision plus voice, Vercel runs the live app, and healthcare gets exportable records."
 
-2:50-3:00: "This is not food policing. It is awareness at the moment behavior happens, and a better record for care later."
+2:50-3:00: "This is not food policing. It is awareness now and a better record later."
