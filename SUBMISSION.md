@@ -122,17 +122,17 @@ xAI STT catches the intentional phrase in the companion app. Grok analyzes the m
 
 ## Three-Minute Demo
 
-0:00-0:20: "This hackathon is about patient agency. If patients will direct care with AI, they need data they own, not just EHR fragments."
+0:00-0:20: "This hackathon is about patient agency IN THE FUTURE. If patients will direct care with AI, they need a constant supply of data they own, not just EHR fragments."
 
 0:20-0:45: "Cal AI proved people will photograph meals. Itadaki turns that familiar habit into portable health context from glasses."
 
 0:45-1:10: "The patient initiates the capture. DAT grabs one Ray-Ban frame, crops toward food, and Grok returns structured calories and macros."
 
-1:10-1:35: "The glasses are not the medical record. They flash the number, while xAI voice speaks only the recent trend."
+1:10-1:35: "The glasses are not the medical record. They flash the number, while xAI voice speaks only the recent trend FROM THE LAST 5 MEALS."
 
 1:35-2:05: "The phone is where agency lives: photo, uncertainty, estimate, and a record the patient can keep or export."
 
-2:05-2:30: "This becomes Health Passport context. Michelle maps recent meals into FHIR-friendly records for future AI or clinician review."
+2:05-2:30: "This becomes Health Passport context. We mapped recent meals into FHIR-friendly records for future AI or clinician review."
 
 2:30-2:50: "For the judges: xAI powers vision and voice, Vercel runs the app, Inngest models the event pipeline, and healthcare gets portable FHIR."
 
